@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DS 202 - Web Scraping</title>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="01_rvest_files/rmdshower/node_modules/shower-ribbon/styles/screen-4x3.css">
+  <link rel="stylesheet" href="01_rvest_files/rmdshower/style-common.css">
+  <link rel="stylesheet" href="01_rvest_files/rmdshower/style-ribbon.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.js"></script>
+  <script src="01_rvest_files/rmdshower/auto-render.min.js" type="text/javascript"></script>
+  
+  
+    <style type="text/css">
+   div.sourceCode { overflow-x: auto; }
+   table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+     margin: 0; padding: 0; vertical-align: baseline; border: none; }
+   table.sourceCode { width: 100%; line-height: 100%; }
+   td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+   td.sourceCode { padding-left: 5px; }
+   code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+   code > span.dt { color: #902000; } /* DataType */
+   code > span.dv { color: #40a070; } /* DecVal */
+   code > span.bn { color: #40a070; } /* BaseN */
+   code > span.fl { color: #40a070; } /* Float */
+   code > span.ch { color: #4070a0; } /* Char */
+   code > span.st { color: #4070a0; } /* String */
+   code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+   code > span.ot { color: #007020; } /* Other */
+   code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+   code > span.fu { color: #06287e; } /* Function */
+   code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+   code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+   code > span.cn { color: #880000; } /* Constant */
+   code > span.sc { color: #4070a0; } /* SpecialChar */
+   code > span.vs { color: #4070a0; } /* VerbatimString */
+   code > span.ss { color: #bb6688; } /* SpecialString */
+   code > span.im { } /* Import */
+   code > span.va { color: #19177c; } /* Variable */
+   code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+   code > span.op { color: #666666; } /* Operator */
+   code > span.bu { } /* BuiltIn */
+   code > span.ex { } /* Extension */
+   code > span.pp { color: #bc7a00; } /* Preprocessor */
+   code > span.at { color: #7d9029; } /* Attribute */
+   code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+   code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+   code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+   code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  
+  
+  
+</head>
+
+<body class="shower list">
+
+  <header class="caption">
+    <h1>DS 202 - Web Scraping</h1>
+    <p>Heike Hofmann</p>
+  </header>
+
+    
+  
+<section id="web-scraping-with-r" class="titleslide slide level1"><h2 class="shout">Web Scraping with R</h2></section><section id="the-rvest-package" class="slide level2">
+<h2>The <code>rvest</code> package</h2>
+<p><code>read_html</code> gets <em>all</em> the information from a URL</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rvest)
+url &lt;-<span class="st"> &quot;https://www.the-numbers.com/weekend-box-office-chart&quot;</span>
+html &lt;-<span class="st"> </span><span class="kw">read_html</span>(url)
+html</code></pre></div>
+<pre><code>## {xml_document}
+## &lt;html&gt;
+## [1] &lt;head&gt;\n&lt;meta http-equiv=&quot;PICS-Label&quot; content=&#39;(PICS-1.1 &quot;https://ww ...
+## [2] &lt;body&gt;\n\n&lt;script&gt;\n  window.fbAsyncInit = function() {\n    FB.init ...</code></pre>
+</section><section id="get-a-table-from-an-online-source" class="slide level2">
+<h2>Get a <em>table</em> from an online source</h2>
+<p><code>html_table</code> extracts all tables from the sourced html into a list of data frames:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tables &lt;-<span class="st"> </span>html <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_table</span>(<span class="dt">fill=</span><span class="ot">TRUE</span>)
+<span class="kw">length</span>(tables)</code></pre></div>
+<pre><code>## [1] 2</code></pre>
+</section><section id="lists" class="slide level2">
+<h2>Lists</h2>
+<ul>
+<li>are most general form of objects in R</li>
+<li><code>[</code> accesses sub lists</li>
+<li><code>[[</code> accesses elements</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(tables[[<span class="dv">1</span>]])</code></pre></div>
+<pre><code>## [1] 1 3</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(tables[[<span class="dv">2</span>]])</code></pre></div>
+<pre><code>## [1] 51 10</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(tables[[<span class="dv">2</span>]])</code></pre></div>
+<pre><code>##                    Movie        Distributor       Gross Change Thtrs.
+## 1 1 (2)    A Quiet Place Paramount Pictures $22,000,000   -33%  3,808
+## 2 2 (1)          Rampage       Warner Bros. $21,000,000   -41%  4,115
+## 3 3 new    I Feel Pretty  STX Entertainment $16,220,000         3,440
+## 4 4 new Super Troopers 2   20th Century Fox $14,700,000         2,038
+## 5 5 (3)    Truth or Dare          Universal  $7,912,000   -58%  3,068
+## 6 6 (4) Ready Player One       Warner Bros.  $7,500,000   -35%  3,208
+##   Per Thtr.  Total Gross Week
+## 1    $5,777 $132,358,711    3
+## 2    $5,103  $66,600,066    2
+## 3    $4,715  $16,220,000    1
+## 4    $7,213  $14,700,000    1
+## 5    $2,579  $30,387,415    2
+## 6    $2,338 $126,181,326    4</code></pre>
+</section><section id="section" class="slide level2">
+<h2></h2>
+<p>Most tables need a bit of clean-up:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(tables[[<span class="dv">2</span>]])</code></pre></div>
+<pre><code>##  [1] &quot;&quot;            &quot;&quot;            &quot;Movie&quot;       &quot;Distributor&quot; &quot;Gross&quot;      
+##  [6] &quot;Change&quot;      &quot;Thtrs.&quot;      &quot;Per Thtr.&quot;   &quot;Total Gross&quot; &quot;Week&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(tables[[<span class="dv">2</span>]])[<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>] &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Rank.Last.Week&quot;</span>, <span class="st">&quot;Rank&quot;</span>)
+box &lt;-<span class="st"> </span>tables[[<span class="dv">2</span>]] <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(
+  <span class="dt">Gross =</span> <span class="kw">parse_number</span>(Gross),
+  <span class="dt">Thtrs. =</span> <span class="kw">parse_number</span>(Thtrs.)
+)
+box</code></pre></div>
+<pre><code>##    Rank.Last.Week Rank                        Movie          Distributor
+## 1               1  (2)                A Quiet Place   Paramount Pictures
+## 2               2  (1)                      Rampage         Warner Bros.
+## 3               3  new                I Feel Pretty    STX Entertainment
+## 4               4  new             Super Troopers 2     20th Century Fox
+## 5               5  (3)                Truth or Dare            Universal
+## 6               6  (4)             Ready Player One         Warner Bros.
+## 7               7  (5)                     Blockers            Universal
+## 8               8  (6)                Black Panther          Walt Disney
+## 9               9  new                      Traffik            Lionsgate
+## 10             10  (7)                 Isle of Dogs      Fox Searchlight
+## 11             11  new              Bharat Ane Nenu    Great India Films
+## 12             12  (8)           I Can Only Imagine Roadside Attractions
+## 13             14  (9)                     Acrimony            Lionsgate
+## 14             13 (10)               Chappaquiddick Entertainment Studi…
+## 15             15 (11)              Sherlock Gnomes   Paramount Pictures
+## 16             16 (12)           The Miracle Season     LD Entertainment
+## 17             17 (13)                       Beirut      Bleecker Street
+## 18             18 (15)            A Wrinkle in Time          Walt Disney
+## 19             19 (14)        Pacific Rim: Uprising            Universal
+## 20             20 (16)                  Love, Simon     20th Century Fox
+## 21             21 (18)          The Death of Stalin            IFC Films
+## 22             22 (23)            Finding Your Feet Roadside Attractions
+## 23             23 (33)                 Lean on Pete                  A24
+## 24             24 (25)         The Greatest Showman     20th Century Fox
+## 25             25 (28)   God’s Not Dead: A Light i… Pure Flix Entertain…
+## 26             26 (59)                  The Endless          Well Go USA
+## 27             27 (35) Grace Jones: Bloodlight and…          Kino Lorber
+## 28             28 (31)                 Midnight Sun            Open Road
+## 29             29 (43)                       Itzhak            Greenwich
+## 30             30 (39)                         Coco          Walt Disney
+## 31             31 (52)      Gonjiam: Haunted Asylum          Well Go USA
+## 32             32 (47)             Back to Burgundy      Music Box Films
+## 33             33 (51) Bombshell: The Hedy Lamarr …            Zeitgeist
+## 34             34  new                Ghost Stories         IFC Midnight
+## 35             35 (73)              Keep The Change          Kino Lorber
+## 36             36  new             Godard Mon Amour    Cohen Media Group
+## 37             37 (60)              Forever My Girl Roadside Attractions
+## 38             38  new  The Devil and Father Amorth          The Orchard
+## 39             39  new  Lou Andreas-Salomé, The Au…         Cinema Libre
+## 40             40 (65)                   Outside In          The Orchard
+## 41             41  new        The Doctor From India            Zeitgeist
+## 42             42  new             This Is Our Land        Distrib Films
+## 43             43  (-)                  Blood Feast Crimson Forest Ente…
+## 44             44 (62)           Hitler’s Hollywood          Kino Lorber
+## 45             45 (71)                 Walk with me          Gathr Films
+## 46             46 (93)                        Beuys          Kino Lorber
+## 47             47 (79)                    The Party Roadside Attractions
+## 48             48 (85)                       Flower          The Orchard
+## 49             49 (90)          The Young Karl Marx          The Orchard
+## 50             50  (-)            Our Blood is Wine      Music Box Films
+## 51             51  (-)                 Tehran Taboo          Kino Lorber
+##       Gross Change Thtrs. Per Thtr.  Total Gross Week
+## 1  22000000   -33%   3808    $5,777 $132,358,711    3
+## 2  21000000   -41%   4115    $5,103  $66,600,066    2
+## 3  16220000          3440    $4,715  $16,220,000    1
+## 4  14700000          2038    $7,213  $14,700,000    1
+## 5   7912000   -58%   3068    $2,579  $30,387,415    2
+## 6   7500000   -35%   3208    $2,338 $126,181,326    4
+## 7   6987000   -35%   3134    $2,229  $48,254,045    3
+## 8   4642000   -20%   1930    $2,405 $681,084,109   10
+## 9   3881000          1046    $3,710   $3,881,000    1
+## 10  3400000   -38%   1947    $1,746  $24,360,538    5
+## 11  2800000           305    $9,180   $2,800,000    1
+## 12  2428761   -41%   1994    $1,218  $79,392,663    6
+## 13  2000000   -45%   1148    $1,742  $41,014,883    4
+## 14  2000000   -35%   1455    $1,375  $14,455,300    3
+## 15  1400000   -42%   1459      $960  $39,551,456    5
+## 16  1130000   -49%   1122    $1,007   $8,835,565    3
+## 17  1050000   -39%    755    $1,391   $3,901,925    2
+## 18   682000   -51%    665    $1,026  $93,668,619    7
+## 19   567000   -61%    646      $878  $58,653,740    5
+## 20   500000   -53%    491    $1,018  $40,212,402    6
+## 21   340216   -29%    210    $1,620   $6,861,920    7
+## 22   178909   -37%    191      $937     $929,306    4
+## 23   176241  +128%     69    $2,554     $346,829    3
+## 24   145000   -36%    169      $858 $173,520,696   18
+## 25    64197   -48%    111      $578   $5,554,287    4
+## 26    47656  +313%     17    $2,803      $80,833    3
+## 27    39611   -29%      9    $4,401     $121,989    2
+## 28    36664   -61%     90      $407   $9,479,823    5
+## 29    28710    -5%     33      $870     $332,572    7
+## 30    24000   -36%     59      $407 $209,717,761   22
+## 31    20005    +5%      7    $2,858      $47,555    2
+## 32    16751   -31%     16    $1,047     $163,984    5
+## 33    15226   -26%     15    $1,015     $744,738   22
+## 34    12563             1   $12,563      $12,563    1
+## 35    11186  +149%      6    $1,864     $128,012    6
+## 36    10994             4    $2,749      $10,994    1
+## 37     9293   -16%     22      $422  $16,363,361   14
+## 38     8378             8    $1,047       $8,378    1
+## 39     5000             1    $5,000       $5,000    1
+## 40     3613   -54%      6      $602      $64,699    4
+## 41     2442             1    $2,442       $5,146    1
+## 42     2442             1    $2,442       $4,965    1
+## 43     1984             3      $661       $6,446   44
+## 44     1792   -79%      1    $1,792      $25,226    2
+## 45     1530   -67%      1    $1,530     $712,016   40
+## 46     1391  +125%      1    $1,391      $59,030   14
+## 47     1215   -63%      5      $243     $734,155   10
+## 48      643   -46%      1      $643     $327,102    6
+## 49      620    -5%      1      $620     $121,446    9
+## 50      138             1      $138      $12,769    7
+## 51       96             1       $96      $74,280   10</code></pre>
+</section><section id="your-turn-6-mins" class="slide level2 white">
+<h2>Your Turn (6 mins)</h2>
+<p><img class="cover" src="images/blue.jpeg" alt="" width=2000></p>
+<p><span style="color:white">Connect to the The-Numbers website for weekly boxoffice gross at <a href="https://www.the-numbers.com/weekend-box-office-chart" class="uri">https://www.the-numbers.com/weekend-box-office-chart</a> </span></p>
+<ul>
+<li><span style="color:white">Pick the week that you were last in the movies. </span></li>
+<li><span style="color:white">Use <code>rvest</code> to download the box office gross in that week. </span></li>
+<li><span style="color:white">Clean up the data (name all the variables, numbers should be numbers). </span></li>
+</ul>
+</section><section id="beyond-tables" class="slide level2">
+<h2>Beyond tables</h2>
+<p>Sometimes data on the web is not structured as nicely … e.g. let’s assume we want to get a list of all recently active baseball players from <a href="http://www.baseball-reference.com/players/">Baseball reference</a></p>
+<p><img src="images/baseball-reference.png" height=400></p>
+</section><section id="selectorgadget" class="slide level2">
+<h2>SelectorGadget</h2>
+<ul>
+<li>SelectorGadget is a javascript bookmarklet to determine the css selectors of pieces of a website we want to extract.</li>
+<li>Read up on the <a href="http://selectorgadget.com/">SelectorGadget</a> link: install it for your machine by either bookmarking the link or installing the Chrome extension, then click on it to use it.</li>
+<li>When SelectorGadget is active, pieces of the website are highlighted in orange/green/red.</li>
+<li>Use SelectorGadget on <a href="http://www.baseball-reference.com/players/" class="uri">http://www.baseball-reference.com/players/</a> .</li>
+<li>read more details on <code>vignette(&quot;selectorgadget&quot;)</code></li>
+</ul>
+</section><section id="selectorgadget-result" class="slide level2">
+<h2>SelectorGadget Result</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">url &lt;-<span class="st"> &quot;http://www.baseball-reference.com/players/a/&quot;</span>
+html &lt;-<span class="st"> </span><span class="kw">read_html</span>(url)
+html <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="st">&quot;#div_players_ a&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>()</code></pre></div>
+<pre><code>## {xml_nodeset (6)}
+## [1] &lt;a href=&quot;/players/a/aardsda01.shtml&quot;&gt;David Aardsma&lt;/a&gt;
+## [2] &lt;a href=&quot;/players/a/aaronha01.shtml&quot;&gt;Hank Aaron&lt;/a&gt;
+## [3] &lt;a href=&quot;/players/a/aaronto01.shtml&quot;&gt;Tommie Aaron&lt;/a&gt;
+## [4] &lt;a href=&quot;/players/a/aasedo01.shtml&quot;&gt;Don Aase&lt;/a&gt;
+## [5] &lt;a href=&quot;/players/a/abadan01.shtml&quot;&gt;Andy Abad&lt;/a&gt;
+## [6] &lt;a href=&quot;/players/a/abadfe01.shtml&quot;&gt;Fernando Abad&lt;/a&gt;</code></pre>
+</section><section id="example" class="slide level2">
+<h2>Example</h2>
+<p>We want to get access to pieces of the links:</p>
+<p><code>html_text</code> allows us to get text out, - <code>html_attr</code> let’s us access an attribute of an html node, <code>html_attrs</code> extracts all attributes of an html node:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">html <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="st">&quot;#div_players_ a&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_text</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>()</code></pre></div>
+<pre><code>## [1] &quot;David Aardsma&quot; &quot;Hank Aaron&quot;    &quot;Tommie Aaron&quot;  &quot;Don Aase&quot;     
+## [5] &quot;Andy Abad&quot;     &quot;Fernando Abad&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">html <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="st">&quot;#div_players_ a&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_attr</span>(<span class="dt">name=</span><span class="st">&quot;href&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>()</code></pre></div>
+<pre><code>## [1] &quot;/players/a/aardsda01.shtml&quot; &quot;/players/a/aaronha01.shtml&quot;
+## [3] &quot;/players/a/aaronto01.shtml&quot; &quot;/players/a/aasedo01.shtml&quot; 
+## [5] &quot;/players/a/abadan01.shtml&quot;  &quot;/players/a/abadfe01.shtml&quot;</code></pre>
+</section><section id="your-turn" class="slide level2">
+<h2>Your Turn</h2>
+<p>Use the SelectorGadget on the website for <a href="http://www.baseball-reference.com/players/a/aardsda01.shtml">David Aardsma</a></p>
+<p>Find the css description to extract his career statistics and load them into your R session.</p>
+<p>Does the same code work to extract career statistics for (some of) the other players?</p>
+<p>What other information do we need to know? - and how can we get to that?</p>
+</section><section id="your-turn---solution" class="slide level2">
+<h2>Your Turn - Solution</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">url &lt;-<span class="st"> &quot;http://www.baseball-reference.com/players/a/aardsda01.shtml&quot;</span>
+html &lt;-<span class="st"> </span><span class="kw">read_html</span>(url)
+<span class="co"># good first start, but not good for further processing</span>
+html <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="st">&quot;.stats_pullout p , h4&quot;</span>)</code></pre></div>
+<pre><code>## {xml_nodeset (22)}
+##  [1] &lt;h4&gt;SUMMARY&lt;/h4&gt;
+##  [2] &lt;p&gt;&lt;strong&gt;Career&lt;/strong&gt;&lt;/p&gt;
+##  [3] &lt;h4 class=&quot;poptip&quot; data-tip=&quot;&amp;lt;strong&amp;gt;Wins Above Replacement&amp;l ...
+##  [4] &lt;p&gt;1.7&lt;/p&gt;
+##  [5] &lt;h4 class=&quot;poptip&quot; data-tip=&quot;Wins&quot;&gt;W&lt;/h4&gt;
+##  [6] &lt;p&gt;16&lt;/p&gt;
+##  [7] &lt;h4 class=&quot;poptip&quot; data-tip=&quot;Losses&quot;&gt;L&lt;/h4&gt;
+##  [8] &lt;p&gt;18&lt;/p&gt;
+##  [9] &lt;h4 class=&quot;poptip&quot; data-tip=&quot;&amp;lt;strong&amp;gt;9 * ER / IP&amp;lt;/strong&amp;g ...
+## [10] &lt;p&gt;4.27&lt;/p&gt;
+## [11] &lt;h4 class=&quot;poptip&quot; data-tip=&quot;Games Played or Pitched&quot;&gt;G&lt;/h4&gt;
+## [12] &lt;p&gt;331&lt;/p&gt;
+## [13] &lt;h4 class=&quot;poptip&quot; data-tip=&quot;Games Started&quot;&gt;GS&lt;/h4&gt;
+## [14] &lt;p&gt;0&lt;/p&gt;
+## [15] &lt;h4 class=&quot;poptip&quot; data-tip=&quot;Saves&quot;&gt;SV&lt;/h4&gt;
+## [16] &lt;p&gt;69&lt;/p&gt;
+## [17] &lt;h4 class=&quot;poptip&quot; data-tip=&quot;Innings Pitched&quot;&gt;IP&lt;/h4&gt;
+## [18] &lt;p&gt;337.0&lt;/p&gt;
+## [19] &lt;h4 class=&quot;poptip&quot; data-tip=&quot;Strikeouts&quot;&gt;SO&lt;/h4&gt;
+## [20] &lt;p&gt;340&lt;/p&gt;
+## ...</code></pre>
+</section><section id="your-turn---solution-2" class="slide level2">
+<h2>Your Turn - Solution (2)</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># better: pull out individual vectors</span>
+html <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="st">&quot;h4&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_text</span>()</code></pre></div>
+<pre><code>##  [1] &quot;SUMMARY&quot; &quot;WAR&quot;     &quot;W&quot;       &quot;L&quot;       &quot;ERA&quot;     &quot;G&quot;       &quot;GS&quot;     
+##  [8] &quot;SV&quot;      &quot;IP&quot;      &quot;SO&quot;      &quot;WHIP&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">html <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_nodes</span>(<span class="st">&quot;.stats_pullout p&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">html_text</span>() </code></pre></div>
+<pre><code>##  [1] &quot;Career&quot; &quot;1.7&quot;    &quot;16&quot;     &quot;18&quot;     &quot;4.27&quot;   &quot;331&quot;    &quot;0&quot;     
+##  [8] &quot;69&quot;     &quot;337.0&quot;  &quot;340&quot;    &quot;1.421&quot;</code></pre>
+</section>
+
+  <!--
+  To hide progress bar from entire presentation
+  just remove “progress” element.
+  -->
+  <!-- <div class="progress"></div> -->
+  <script src="01_rvest_files/rmdshower/node_modules/shower/node_modules/shower-core/shower.min.js"></script>
+  <!-- Copyright © 2015 Yours Truly, Famous Inc. -->
+  <!-- Photos by John Carey, fiftyfootshadows.net -->
+
+    <script>renderMathInElement(document.body);</script>
+  
+  
+</body>
+</html>
