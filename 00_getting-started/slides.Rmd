@@ -89,15 +89,15 @@ library(gridExtra)
 grid.arrange(p1,p2,p3, nrow=1)
 ```
 
-... what kind of birds are [these](http://www.theradzoo.com/meet-the-animals/birds/rainbow-lorikeet/)?
+... what kind of birds are [these](https://images.freeimages.com/images/large-previews/128/rainbow-lorikeet-1394752.jpg)?
 
 # ... we will be using R for that!
 
 ## R is ...
 
-* with python most commonly used data science language (see [kdnuggets](http://www.kdnuggets.com/2017/05/poll-analytics-data-science-machine-learning-software-leaders.html) survey)
+* with python most commonly used data science language (see [kdnuggets](https://www.kdnuggets.com/2019/05/poll-top-data-science-machine-learning-platforms.html) survey)
 * __Free__ to use, __open source__ so you can see what code is doing to your data
-* __Extensible__: Over 10000 user contributed add-on packages currently on CRAN! Bioconductor has more than 1300 packages, and many researchers provide packages through github.
+* __Extensible__: Over 18,000 user contributed add-on packages currently on CRAN! Bioconductor has more than 1300 packages, and many researchers provide packages through github.
 * __Powerful__
     * With the right tools, get more work done, faster.
 * __Flexible__
@@ -107,7 +107,8 @@ grid.arrange(p1,p2,p3, nrow=1)
 devtools::install_github("metacran/crandb")
 pkgs <- crandb::list_packages(limit = 999999)
 length(pkgs)
-# [1] 12004
+# [1] 18506  # 2022
+# [1] 12004  # 2018
 ```
 
 ## at the end of the course you will ...
@@ -143,9 +144,8 @@ Course website:
 | Component | Weight |
 |:-- | --:|
 | Homework | 20% |
-| Labs | 20% |
+| Labs | 25% |
 | Midterm | 25% |
-| Mini-project | 5% |
 | **Final Project** | |
 |   report | 22.5% |
 |   presentation | 7.5% |
@@ -153,7 +153,7 @@ Course website:
 
 ## Labs
 
-- during class time on every other Thursday (starting with Thursday, Jan 19th) 
+- during class time on every other Thursday (starting with Thursday, Sep 13th) 
 - you will be partnered (randomly) in groups of 3 to 4
 - lab assignments are designed to be finished during class time, but 'finishing touches' can be applied until the following Monday, 10pm. 
 - if you cannot attend the lab, please let me know beforehand. Nevertheless, you are expected to do the work!
@@ -168,15 +168,9 @@ Course website:
 
 - in-class programming exam.
 - open book, open note, open internet (no direct help from anyone else).
-- tentatively scheduled for April 10.
+- tentatively scheduled for Oct 27.
 - sample exams will be posted as we get closer to the date.
 
-## Mini-project
-
-- team-based project (3-4 members).
-- data exploration of a given data set. 
-- your part: lay out data exploration and write up report of findings.
-- scope: slightly bigger homework.
 
 ## Final project
 
@@ -190,7 +184,7 @@ Course website:
 
 ## Attendance
 
-I expect you to attend class: there will be a substantial amount of time devoted to 'hands-on' examples on the computers. Make use of that time!
+I expect you to attend class in some way (f2f or via zoom): there will be a substantial amount of time devoted to 'hands-on' examples on the computers. Make use of that time!
 
 If you have to miss class, please 
 
@@ -205,14 +199,6 @@ There's lots of ways to get help in case you are stuck:
 (2) ask a team member,
 (3) write email to the instructor with your question
 
-## Asking a good question
-
-is a learned and valuable skill!
-
-Have a look at:
-
-- stackoverflow's [Asking a good question](http://stackoverflow.com/help/how-to-ask)
-- R's [Posting guidelines](https://www.r-project.org/posting-guide.html)
 
 ## Asking a good question
 
@@ -223,12 +209,6 @@ Have a look at:
 - stackoverflow's [Asking a good question](http://stackoverflow.com/help/how-to-ask)
 - R's [Posting guidelines](https://www.r-project.org/posting-guide.html)
 
-## What do you know already?
-
-- excel?
-- a programming language? 
-- SAS? R? R markdown?
-- database theory? what is a third normal form?
 
 ## What is this class about?
 
@@ -259,7 +239,7 @@ http://heike.wufoo.com/forms/topics-of-interest/
 
 Typical data science project:
 
-![typical cycle of a data science project](http://r4ds.had.co.nz/diagrams/data-science.png)
+![typical cycle of a data science project](data-science.png)
 
 
 - exploration goes hand in hand with understanding
@@ -282,6 +262,6 @@ Statistician Hans Rosling (1948 - 2017) presented [GapMinder at TED 2006](https:
 - <font color="white">Follow the link to open Gapminder tools at https://www.gapminder.org/tools/#_chart-type=bubbles</font>
 - <font color="white">Recreate Hans Rosling's chart of life expectancy (y-axis) by number of children (x-axis) and move the slider over time.</font>
 - <font color="white">Using this chart, can you find evidence for the AIDS epidemic in Africa? the civil war in Nigeria? the earth quake in Haiti?</font>
-- <font color="white">How is income related to life expectancy?
+- <font color="white">How is income generally related to life expectancy?
 </font>
 - <font color="white">What else did you find? How much of this did you know before?</font>
