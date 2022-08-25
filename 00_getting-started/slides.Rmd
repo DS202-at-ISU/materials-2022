@@ -239,7 +239,8 @@ http://heike.wufoo.com/forms/topics-of-interest/
 
 Typical data science project:
 
-![typical cycle of a data science project](data-science.png)
+<img src="data/data-science.png" alt="typical cycle of a data science project" height=250>
+
 
 
 - exploration goes hand in hand with understanding
@@ -255,6 +256,7 @@ Statistician Hans Rosling (1948 - 2017) presented [GapMinder at TED 2006](https:
 ... let's try this out ...
 
 ## Your Turn {.white}
+
 
 <img src="data/blue.jpeg" class="cover" height=1500>
 
