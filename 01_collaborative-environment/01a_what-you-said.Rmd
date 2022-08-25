@@ -47,7 +47,7 @@ tlong <- topics %>% pivot_longer(names_to="topic", values_to="rating", `Sports (
 tlong %>% 
   ggplot(aes(x = rating)) + geom_bar(aes(fill=rating)) +
   facet_wrap(~topic, ncol=5) +
-  theme(legend.position="bottom")
+  theme(legend.position="bottom") 
 ```
 
 

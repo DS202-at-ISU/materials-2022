@@ -38,6 +38,8 @@ You are asked to investigate the relationship between height and weight of Iowan
 
 In the next 20 mins:
 
+0. Introduce yourself to your neighbor(s).
+
 0. Complete the following tasks and **write instructions / documentation** for a collaborator to be able to reproduce your findings.
 
 1. Verify that there are 6227 cases (= number of interviews) in the data. 
@@ -56,16 +58,14 @@ class: inverse
 
 In the next 10 mins:
 
-1. Introduce yourself to your neighbor. 
+1. Introduce yourself to another team. 
 
 2. Swap the report and the instructions / documentation with your collaborator - **BUT DO NOT TALK ABOUT THE DATA OR THE ANALYSIS** (yet)
 
-3. ~~Try to reproduce your neighbor's findings.~~ 
-Let's go through the checklist of reproducibility together
+3. Try to reproduce the other team's findings.
 
+3. Only in case things are not working - talk to the other team and walk them through your report.
 
-Thanks to  Jenny Bryan and Mine Cetinkaya-Rundel for the idea for the original  example
-and the [invaluable checklist](checklist.md)!
 
 
 ---
