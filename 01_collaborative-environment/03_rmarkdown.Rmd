@@ -1,5 +1,5 @@
 ---
-title: "DS 202 - R, RStudio, and RMarkdown"
+title: "Stat 585 - R, RStudio, and RMarkdown"
 author: "Heike Hofmann"
 ratio: 16x10
 output:
@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## R is ...
 
 * __Free__ to use
-* __Extensible__: Over 12000 user contributed add-on packages currently on CRAN!
+* __Extensible__: Over 8500 user contributed add-on packages currently on CRAN!
 * __Powerful__: With the right tools, get more work done, faster.
 * __Flexible__: Not a question of _can_, but _how_.
 * __Frustrating__: Flexibility comes at a cost (easy to shoot yourself in the foot!).
@@ -87,7 +87,7 @@ length(pkgs)
 ```
 
 
-Have a look at RStudio's [RMarkdown cheat sheet](https://www.rstudio.com/resources/cheatsheets/)
+Have a look at RStudio's [RMarkdown cheat sheet](https://www.rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf)
 
 ## What is RMarkdown?
 
@@ -116,7 +116,7 @@ Have a look at RStudio's [RMarkdown cheat sheet](https://www.rstudio.com/resourc
 
 ## Your Turn (5 min) {.white}
 
-<img class="cover" src="images/blue.jpeg" alt="" width=2000>
+<img class="cover" src="images/yourturn.jpg" alt="">
 
 
 

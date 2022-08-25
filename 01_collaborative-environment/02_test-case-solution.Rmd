@@ -1,113 +1,267 @@
 ---
-title: "DS 202 - Working in teams: Sample solution for the test case"
+title: "Stat 585 - Working in teams: Sample solution for the test case"
 author: "Heike Hofmann"
-ratio: 16x10
 output:
-  rmdshower::shower_presentation:
-    self_contained: false
-    katex: true
-    theme: ribbon
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
 ---
+class: center, middle
+
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, fig.width=4, fig.height=4)
-library(tidyverse)
+options(htmltools.dir.version = FALSE)
 ```
 
-# Sample Solution to the test case 
+# Solution to the test case 
+
+---
 
 ## A test case
 
-We are asked to : 
+The dataset `brfss_iowa.csv` (linked from website) contains 6227 records from the Behavioral Risk Factor Surveillance System (BRFSS) for Iowans.
 
-1. Visualize life expectancy over time for Canada in the 1950s and 1960s using a line plot.
-2. Something is clearly wrong with this plot! Turns out there's a data error 
-in the data file: life expectancy for Canada in the year 1957 is coded
-as `999999`, it should actually be `69.96`. Make this correction.
-3. Visualize life expectancy over time for Canada again, with the corrected data.
+> The Behavioral Risk Factor Surveillance System (BRFSS) is the nation's premier system of health-related telephone surveys that collect state data about U.S. residents regarding their health-related risk behaviors.
 
-Using the gapminder data provided
+It is conducted annually by the Center for Disease Control and Prevention (CDC).
 
-## Step-by-step plan of work
+Codebook with detailed explanations of variables is [available here](https://www.cdc.gov/brfss/annual_data/2020/pdf/codebook20_llcp-v2-508.pdf).
 
-1. Read the data
-2. Focus on values of Canada
-3. Visualize the values for Canada
-4. See whether we can find the problem
-5. ... then we'll see ...
+---
+class: inverse
+## The Problem
 
-## Reading the data 
+0. Complete the following tasks and **write instructions / documentation** for a collaborator to be able to reproduce your findings.
 
-```{r}
-life5060 <- read.csv("https://raw.githubusercontent.com/ds202-at-isu/materials/master/01_collaborative-environment/data/gapminder-5060.csv")
-head(life5060)
+1. Verify that there are 6227 cases (= number of interviews) in the data. 
+
+2. Verify that there are variables `WEIGHT2` and `HEIGHT3` in the data and read the description of the variables in the codebook. 
+
+3. How are height and weight related? Find correlations of weight and height by gender (`SEX`). How many values are the correlations based on for each gender?
+
+2. Write a short report of your findings. Address potential problems in the data.
+
+
+
+---
+
+# A solution attempt
+
+0. Setup 
+
+    - this solution uses R v4.1.2 in RStudio (2022.07.1 Build 554). 
+    - You need the R packages `tidyverse` and `rmarkdown` to run the solution
+    - use the command `install.packages(c("tidyverse","rmarkdown"))` 
+    in the R console to install the two packages
+
+1. Navigate to https://github.com/ds202-at-ISU/materials
+
+2. Download  the file [`test-case-solution.Rmd`](https://raw.githubusercontent.com/ds202-at-ISU/materials/master/01_collaborative-environment/test-case-solution.Rmd) in folder  `01_collaborative-environment`  in RStudio to get this set of slides.
+
+3. "Knit" the file (Click on the button in the menu).
+
+---
+
+## What is the relationship between height and weight? 
+
+Read the data: 
+
+```{r message = FALSE}
+library(tidyverse)
+iowa <- readr::read_csv("https://github.com/Stat585-at-ISU/materials/raw/master/01_collaborative-environment/data/brfss_iowa.csv") 
+# the read_csv function from the readr package is faster than the standard read.csv
+# but the output is a tibble (we'll come back to that)
+
+iowa
 ```
 
-## Focus on the values for Canada
+---
 
-```{r}
-canada <- life5060 %>% filter(country == "Canada")
-head(canada)
+## Variables `HEIGHT3` and `WEIGHT2`
+
+```{r, message = FALSE}
+iowa %>% select(HEIGHT3, WEIGHT2) %>% head()
 ```
 
-## Visualize 
+Variables are there ... but ... some data values look odd.
 
-Draw a line for the life expectancy in Canada
-```{r}
-canada %>% 
-  ggplot(aes(x = year, y = lifeExp)) +
-  geom_line()
+---
+
+## Codebook excerpt
+
+From the [codebook](https://www.cdc.gov/brfss/annual_data/2015/pdf/codebook15_llcp.pdf): HEIGHT3 and WEIGHT2 are the originally recorded variables.
+
+<img src="https://github.com/Stat585-at-ISU/materials/raw/master/01_collaborative-environment/images/codebook-height3.png" width=750>
+
+Let's plot that ...
+
+---
+
+## Plot 
+
+Load the `ggplot2` package to plot weight versus height:
+```{r message = FALSE, fig.width=3.5, fig.height = 3.5, warning = FALSE}
+iowa %>% 
+  ggplot(aes(x = WEIGHT2, y = HEIGHT3)) + geom_point()
 ```
 
-## Find the problematic value and fix it
+Height and weight should show a somewhat positive correlation. These clusters are an indication of the data coding.
+
+---
+
+## Next steps
+
+Obviously, we need to spend some time cleaning these variables before we can make use of them. 
+
+We have a couple of choices: 
+
+1. We can buckle down and do that clean-up and then move on to the calculation.
+
+2. We can take another look at the variables and investigate what `HTIN4`, `HTM4`, and `WTKG3` are ... 
+
+---
+
+## Route 2
+
+Let's take the second route first and draw a picture of height and weight in metric units:
+
+```{r message = FALSE, warning = FALSE, fig.width = 5.5, fig.height = 2.5}
+iowa %>% 
+  ggplot(aes(x = HTM4, y = WTKG3)) + geom_point(alpha = 0.2) + 
+  facet_grid(.~SEX) +
+  geom_smooth()
+```
+
+These charts look much better! We see a general increase in weight as height increases. The variability in weight is huge, though. On average, women (`SEX = 2`) are shorter and lighter.
+
+---
+
+## Correlations of height and weight by gender
+
+Based on variables `HTM4` and `WTKG3`
 
 ```{r}
-canada %>% filter(year == 1957)
+iowa %>% 
+  group_by(SEX) %>%
+  summarize(
+    n = n(),
+    cor = cor(HTM4, WTKG3, use="pairwise.complete"),
+    non_missing = sum(!is.na(HTM4) & !is.na(WTKG3)),
+    non_missing_perc = non_missing/n*100
+  )
 
-canada_fixed <- canada %>% mutate(
-  lifeExp = replace(lifeExp, year==1957, 69.96)  
+```
+
+
+---
+
+## Route 1
+
+This is a bit more work. 
+
+```{r}
+# first of all, replace all missing values by NAs
+iowa <- iowa %>% mutate(
+  HEIGHT3 = replace(HEIGHT3, HEIGHT3 %in% c(7777,9999), NA),
+  WEIGHT2 = replace(WEIGHT2, WEIGHT2 %in% c(7777,9999), NA)
 )
 ```
 
-## visualize the fixed data
+Let's take on height first:
+```{r}
+iowa <- iowa %>% mutate(
+  feet = HEIGHT3 %/% 100, # feet and inch only make sense for standard values,
+  inch = HEIGHT3 %% 100,  # but we can calculated them for all
+  height = ifelse(HEIGHT3 >= 9000, 
+                  HEIGHT3 - 9000, # transform all metric values by subtracting 9000
+                  feet *30.48 + 2.54*inch # add feet and inch converted to centimeter
+                  )
+)
+```
+
+---
+
+## Now plot!
+
+```{r, fig.height = 5}
+iowa %>% filter(!is.na(height)) %>%
+  ggplot(aes(x = height)) + geom_histogram(binwidth = 2.5) +
+  facet_grid(SEX~.)
+```
+
+We get similar findings - for height at least: women are on average shorter than men.
+
+---
+
+## Route 1 (cont'd.)
+
+do the same thing for weight as we did for height before: 1 pound is 0.454 kg
 
 ```{r}
-canada_fixed %>% ggplot(aes(x = year, y = lifeExp)) +
-  geom_line()
+iowa <- iowa %>% mutate(
+  weight = ifelse(WEIGHT2 >= 9000, 
+                  WEIGHT2 - 9000, # transform all metric values by subtracting 9000
+                  WEIGHT2*.454 # 1 lbs = 0.454 kg
+                  )
+)
 ```
 
-## ... on to the stretch goal ... 
+---
 
-Add lines for Mexico and the US
+## Route 1
+
+```{r warning = FALSE}
+iowa %>% 
+  group_by(SEX) %>%
+  summarize(
+    n = n(),
+    cor = cor(height, weight, use="pairwise.complete"),
+    non_missing = sum(!is.na(height) & !is.na(weight)),
+    non_missing_perc = non_missing/n*100
+  )
+```
+
+---
+
+## Recap 
+
+- Route 1 and 2 give identical solutions
+
+- Read the codebook, visualize the data, even if the question does not ask for it.
+
 
 ```{r}
-canada_fixed %>% 
-  ggplot(aes(x = year, y = lifeExp, group=country)) + geom_line() +
-  geom_line(data = life5060 %>% 
-              filter(country %in% c("United States", "Mexico")))
+iowa %>% 
+  group_by(SEX) %>%
+  summarize(
+    n = n(),
+    cor = cor(HEIGHT3, WEIGHT2, use="pairwise.complete"),
+    non_missing = sum(!is.na(HEIGHT3) & !is.na(WEIGHT2)),
+    non_missing_perc = non_missing/n*100
+  )
 ```
 
-## ... on to the stretch goal ... 
 
-Add lines for Mexico and the US, color lines by country and add a legend
+---
 
-```{r, fig.width = 6}
-canada_fixed %>% 
-  ggplot(aes(x = year, y = lifeExp, colour=country)) + geom_line() +
-  geom_line(data = life5060 %>% 
-              filter(country %in% c("United States", "Mexico")))
+## Overview of the different height variables
 
+```{r}
+summary(iowa[,c("HEIGHT3", "HTIN4", "HTM4", "height")])
 ```
 
-## How reproducible is this solution?
+Why are there more missing values in `HTIN4`? - The official BRFSS data is missing any metric data in the variable `HTIN4`
 
-1. Navigate to https://github.com/ds202-at-isu/materials
-2. Open the folder `01_collaborative-environment` and download the file `02_test-case-solution.Rmd`
-3. Open the file in RStudio.
-4. "Knit" the file.
+---
 
+## Recap
 
-## R Markdown
+- this slide deck is rendered from an R Markdown document, located at [a github repo](https://github.com/Stat585-at-ISU/materials-2019/tree/master/01_collaborative-environment).
 
 - code and text/documentation are interwoven: reproducible and self-documenting.
+
 - extend or refine analyses by copying and modifying code blocks.
+
 - disseminate your work by sharing the RMarkdown file
