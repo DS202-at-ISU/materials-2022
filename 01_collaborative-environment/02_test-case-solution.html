@@ -33,7 +33,7 @@ The dataset `brfss_iowa.csv` (linked from website) contains 6227 records from th
 
 It is conducted annually by the Center for Disease Control and Prevention (CDC).
 
-Codebook with detailed explanations of variables is [available here](https://www.cdc.gov/brfss/annual_data/2015/pdf/codebook15_llcp.pdf).
+Codebook with detailed explanations of variables is [available here](https://www.cdc.gov/brfss/annual_data/2020/pdf/codebook20_llcp-v2-508.pdf).
 
 ---
 class: inverse
@@ -57,14 +57,14 @@ class: inverse
 
 0. Setup 
 
-    - this solution uses R v4.0.5 in RStudio (2021.09.1 Build 372). 
+    - this solution uses R v4.1.2 in RStudio (2022.07.1 Build 554). 
     - You need the R packages `tidyverse` and `rmarkdown` to run the solution
     - use the command `install.packages(c("tidyverse","rmarkdown"))` 
     in the R console to install the two packages
 
 1. Navigate to https://github.com/ds202-at-ISU/materials
 
-2. Download  the file [`test-case-solution.Rmd`](https://raw.githubusercontent.com/s202-at-ISU/materials/master/01_collaborative-environment/test-case-solution.Rmd) in folder  `01_collaborative-environment`  in RStudio to get this set of slides.
+2. Download  the file [`test-case-solution.Rmd`](https://raw.githubusercontent.com/ds202-at-ISU/materials/master/01_collaborative-environment/test-case-solution.Rmd) in folder  `01_collaborative-environment`  in RStudio to get this set of slides.
 
 3. "Knit" the file (Click on the button in the menu).
 
@@ -77,7 +77,7 @@ Read the data:
 
 ```r
 library(tidyverse)
-iowa &lt;- readr::read_csv("https://github.com/Stat585-at-ISU/materials/raw/master/01_collaborative-environment/data/brfss_iowa.csv") 
+iowa &lt;- readr::read_csv("https://github.com/ds202-at-ISU/materials/raw/master/01_collaborative-environment/data/brfss_iowa.csv") 
 ```
 
 ```

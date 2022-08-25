@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>DS 202 - RMarkdown</title>
+    <title>DS 202 - Tools of the Trade</title>
     <meta charset="utf-8" />
     <meta name="author" content="Heike Hofmann" />
-    <script src="libs/header-attrs-2.14/header-attrs.js"></script>
-    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
-    <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/default-fonts.css" rel="stylesheet" />
   </head>
   <body>
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
-# DS 202 - RMarkdown
+# DS 202 - Tools of the Trade
 ### Heike Hofmann
 
 ---
@@ -21,81 +21,92 @@ class: center, middle, inverse, title-slide
 
 
 
-## Markdown
+In this class we will use 
 
-- Markdown is a particular type of **markup** language.
+- R and RStudio: make sure you have newish versions installed  (R 4.0.x; RStudio 2021 or later) 
 
-- Markup languages are designed to **produce documents from plain text**.
+- markdown and Rmarkdown, see [Rstudio cheat sheet](https://www.rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf) 
 
-- Some of you may be familiar with **LaTeX**. This is another (less human friendly) markup language for creating pdf documents.
+- git &amp; github resources
 
-- LaTeX gives you much greater control, but it is restricted to pdf and has a much greater learning curve.
-
-- **Markdown** is becoming a **standard**. Many websites will generate HTML from Markdown (e.g. GitHub, Stack Overflow, reddit, ...).
-
----
-
-## Markdown is easy
-
-
-```r
- *italic*
- **bold**
-
-# Header 1
-## Header 2
-### Header 3
-
-- List item 1
-- List item 2
-    - item 2a
-    - item 2b
-
-1. Numbered list item 1
-1. Numbered list item 2
-    - item 2a
-    - item 2b
-```
-
-
-Have a look at RStudio's [RMarkdown cheat sheet](https://www.rstudio.com/resources/cheatsheets/)
-
-... and even nicer: there is a Visual Editor in RStudio!
+    - Jenny Bryan's: Happy Git with R http://happygitwithr.com/
+    
+    - Data Carpentry's tutorials: https://github.com/datacarpentry
+    
+    - Reproducible Science Curriculum intitative: https://github.com/Reproducible-Science-Curriculum
+    
+ &lt;!--   - Small 'mind map' of git functionality: https://rachelcarmena.github.io--&gt;
 
 ---
 
-## What is RMarkdown?
+# Outline for today
 
-- ... an authoring format that enables easy creation of dynamic documents, presentations, and reports from R. 
+- install / update R and RStudio
 
-- it combines the core syntax of markdown with embedded R code chunks that are run so their output can be included in the final document.
+- do a data exploration
 
-- R Markdown documents are fully reproducible (they are automatically regenerated whenever underlying R code or data changes).
-
----
-class: inverse
-## 
-
-&lt;img class="cover" src="images/rmarkdown.png" alt=""&gt;
-
+- install git / github and link it to RStudio
 
 ---
-class: inverse
-## Your Turn (8 min) 
+
+# Installing R
+
+- Make sure to have R version 4.x.x installed
+
+- Go to [http://www.r-project.org/](http://www.r-project.org/)
+- Click the CRAN link on the left, and pick a download site (0-Cloud is a good choice)
+- Choose link based on your OS
+- On Windows, choose the "base" subdirectory to install R.
+- On OS X, choose the .pkg file to install R.
+
+---
+
+# Installing RStudio
+
+- RStudio-2022  supports both R and python (Jupyter notebooks)
+
+- Browse to [https://www.rstudio.com/](https://www.rstudio.com/)
+- Mouse over Products and click RStudio
+- Choose RStudio Desktop
+- Click Download RStudio Desktop
+- Choose the installer appropriate for your platform
 
 
-1. Open RStudio, create a new project.
+---
 
-2. Create a new RMarkdown file and knit it.
+# RStudio is ...
 
-3. In a browser, navigate to the RMarkdown cheat sheet and download a copy (Google for the link!)
+- an excellent IDE for R (and python)
 
-3. Use the cheat sheet to figure out how to make a change to the markdown formatting and knit again.
+[From Julie Lowndes, Data Scientist at Openscapes](http://jules32.github.io/resources/RStudio_intro/):  
 
-4. Export output to a different file format (try a word document). If you have Latex installed on your machine you can also try to export to a pdf file.
+&lt;blockquote&gt;
+&lt;b&gt;If R were an airplane, RStudio would be the airport&lt;/b&gt;, providing many, many supporting services that make it easier for you, the pilot, to take off and go to awesome places. Sure, you can fly an airplane without an airport, but having those runways and supporting infrastructure is a game-changer.
+&lt;/blockquote&gt;
 
-5. If you feel adventurous, change some of the R code and knit again.
+---
 
+## The RStudio IDE
+
+&lt;img class="cover" src="images/rstudio-panes.png" alt=""&gt;
+
+---
+
+## The RStudio IDE
+
+
+1. **Source editor:** Docking station for multiple files, Useful shortcuts ("Knit"), Highlighting/Tab-completion, Code-checking (R, HTML, JS), Debugging features  
+
+2. **Console window:** Highlighting/Tab-completion, Search recent commands
+
+3. **Environment pane:** Tools for package development, git, etc
+
+4. **Other tabs/panes:** Graphics, R documentation, File system navigation/access
+
+&lt;br&gt;
+&lt;br&gt;
+
+*Protip:* save yourself the headaches figuring out file paths and instead work in an RStudio R project (popup menu at the top left)
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
