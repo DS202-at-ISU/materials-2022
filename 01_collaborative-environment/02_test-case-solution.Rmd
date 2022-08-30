@@ -265,3 +265,20 @@ Why are there more missing values in `HTIN4`? - The official BRFSS data is missi
 - extend or refine analyses by copying and modifying code blocks.
 
 - disseminate your work by sharing the RMarkdown file
+
+
+--- 
+
+## Struggles can be informative
+
+- we struggle with technology, the know how of the language ...
+
+- ... others will too. 
+
+- remember those struggles when you write instructions for others to use your work
+
+---
+
+## Checklist of reproducibility
+
+- 
