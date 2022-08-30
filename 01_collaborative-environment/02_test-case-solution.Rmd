@@ -1,5 +1,5 @@
 ---
-title: "Stat 585 - Working in teams: Sample solution for the test case"
+title: "DS 202 - Working in teams: Sample solution for the test case"
 author: "Heike Hofmann"
 output:
   xaringan::moon_reader:
@@ -58,7 +58,7 @@ class: inverse
 
 1. Navigate to https://github.com/ds202-at-ISU/materials
 
-2. Download  the file [`test-case-solution.Rmd`](https://raw.githubusercontent.com/ds202-at-ISU/materials/master/01_collaborative-environment/test-case-solution.Rmd) in folder  `01_collaborative-environment`  in RStudio to get this set of slides.
+2. Download  the file [`test-case-solution.Rmd`](https://raw.githubusercontent.com/ds202-at-ISU/materials/master/01_collaborative-environment/test-case-solution.Rmd) in folder  `01_collaborative-environment`. Open the file in RStudio.
 
 3. "Knit" the file (Click on the button in the menu).
 
