@@ -202,11 +202,18 @@ library(usethis)
 gert::git_config()
 use_git_config(user.name = "Jane Doe", user.email = "jane@example.org", scope = "user")
 ```
-- Getting a [Personal Access Token](https://happygitwithr.com/https-pat.html)
+- Getting a [Personal Access Token](https://happygitwithr.com/https-pat.html). 
 
 
 ```r
 usethis::create_github_token()
+```
+
+- Copy it and store your credentials:
+
+
+```r
+gitcreds::gitcreds_set()
 ```
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
