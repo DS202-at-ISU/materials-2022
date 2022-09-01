@@ -74,18 +74,34 @@ class: inverse
 
 ---
 class: inverse
-## Your Turn (8 min) 
+## Your Turn (10 min) 
 
 
-1. Open RStudio, create a new project.
+1. Open RStudio, create a new project - how about `ds202`?.
 
-2. Create a new RMarkdown file and knit it.
+2. Create a new RMarkdown file (File > New File > R Markdown ...) and knit it.
 
-3. In a browser, navigate to the RMarkdown cheat sheet and download a copy (Google for the link!)
+3. Use the Visual editor to: 
+  
+  - claim the document by making yourself the author,
+  - change some of the text to *italic*,
+  - include an enumerated list with three items
+  
+4. Switch to the source editor and look at the changes. 
 
-3. Use the cheat sheet to figure out how to make a change to the markdown formatting and knit again.
+5. In a browser, navigate to the RMarkdown cheat sheet and download a copy (Google for the link!)
 
 4. Export output to a different file format (try a word document). If you have Latex installed on your machine you can also try to export to a pdf file.
 
-5. If you feel adventurous, change some of the R code and knit again.
+---
+class: inverse
+## Your Turn (5 min) 
+
+
+1. Make the scatterplot a square (i.e. figure height and figure width should be the same)
+
+2. Hide the code that makes the summary, but show the code for the scatterplot
+
+3. tricky: Include a caption for the scatterplot (you might have to google for this)
+
 

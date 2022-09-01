@@ -1,8 +1,8 @@
 ---
 title: "DS 202 - Working in teams: Sample solution for the test case"
-author: "Heike Hofmann"
+author: "Your Name"
 output:
-  html_document
+  word_document
 ---
 
 ```{r setup, include=FALSE}
@@ -35,7 +35,7 @@ Codebook with detailed explanations of variables is [available here](https://www
 
 ```{r message = FALSE}
 library(tidyverse)
-iowa <- readr::read_csv("https://github.com/ds202-at-ISU/materials/raw/master/01_collaborative-environment/data/brfss_iowa.csv") 
+iowa <- readr::read_csv("https://github.com/ds202-at-ISU/materials/raw/master/01_collaborative-environment/data/brfss_mn.csv") 
 #iowa <- read_csv("~/Documents/Data/BRFSS/brfss-iowa-2020.csv")
 # the read_csv function from the readr package is faster than the standard read.csv
 # but the output is a tibble (we'll come back to that)
@@ -179,10 +179,18 @@ iowa %>%
 
 ## Recap 2
 
--   the solution is disseminated from an R Markdown document, located at [a github repo](https://github.com/Stat585-at-ISU/materials-2019/tree/master/01_collaborative-environment).
+4.  the solution is disseminated from an R Markdown document, located at [a github repo](https://github.com/Stat585-at-ISU/materials-2019/tree/master/01_collaborative-environment).
+5.  code and text/documentation are interwoven: reproducible and self-documenting.
+6.  extend or refine analyses by copying and modifying code blocks.
+7.  disseminate your work by sharing the RMarkdown file
+8.  ghjchjgdhgj
 
--   code and text/documentation are interwoven: reproducible and self-documenting.
+dfsghghjdsfhjgdsfjkhdsfhjkjkhdsfjkhsfhj
 
--   extend or refine analyses by copying and modifying code blocks.
+```{r}
+1+1
+```
 
--   disseminate your work by sharing the RMarkdown file
+```{python}
+
+```

@@ -183,8 +183,31 @@ class: inverse
 
 - all class materials are in a github repo
 
-- RStudio supports git integration in projects (next ..)
+- RStudio supports git integration in projects 
 
+---
+
+## RStudio and git
+
+- [Install git](https://happygitwithr.com/install-git.html) or update it
+
+- Chapter 7: [Introduce yourself to git](https://happygitwithr.com/hello-git.html)
+
+
+```r
+## install.packages("usethis")
+
+library(usethis)
+## check your configuration
+gert::git_config()
+use_git_config(user.name = "Jane Doe", user.email = "jane@example.org", scope = "user")
+```
+- Getting a [Personal Access Token](https://happygitwithr.com/https-pat.html)
+
+
+```r
+usethis::create_github_token()
+```
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
