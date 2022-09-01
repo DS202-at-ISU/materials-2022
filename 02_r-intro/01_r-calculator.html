@@ -1,249 +1,423 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <title>DS 202: Intro to R</title>
-  <meta charset="utf-8">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="01_r-calculator_files/rmdshower/node_modules/shower-ribbon/styles/screen-4x3.css">
-  <link rel="stylesheet" href="01_r-calculator_files/rmdshower/style-common.css">
-  <link rel="stylesheet" href="01_r-calculator_files/rmdshower/style-ribbon.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.js"></script>
-  <script src="01_r-calculator_files/rmdshower/auto-render.min.js" type="text/javascript"></script>
-  
-  
-    <style type="text/css">
-   div.sourceCode { overflow-x: auto; }
-   table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-     margin: 0; padding: 0; vertical-align: baseline; border: none; }
-   table.sourceCode { width: 100%; line-height: 100%; }
-   td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-   td.sourceCode { padding-left: 5px; }
-   code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-   code > span.dt { color: #902000; } /* DataType */
-   code > span.dv { color: #40a070; } /* DecVal */
-   code > span.bn { color: #40a070; } /* BaseN */
-   code > span.fl { color: #40a070; } /* Float */
-   code > span.ch { color: #4070a0; } /* Char */
-   code > span.st { color: #4070a0; } /* String */
-   code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-   code > span.ot { color: #007020; } /* Other */
-   code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-   code > span.fu { color: #06287e; } /* Function */
-   code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-   code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-   code > span.cn { color: #880000; } /* Constant */
-   code > span.sc { color: #4070a0; } /* SpecialChar */
-   code > span.vs { color: #4070a0; } /* VerbatimString */
-   code > span.ss { color: #bb6688; } /* SpecialString */
-   code > span.im { } /* Import */
-   code > span.va { color: #19177c; } /* Variable */
-   code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-   code > span.op { color: #666666; } /* Operator */
-   code > span.bu { } /* BuiltIn */
-   code > span.ex { } /* Extension */
-   code > span.pp { color: #bc7a00; } /* Preprocessor */
-   code > span.at { color: #7d9029; } /* Attribute */
-   code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-   code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-   code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-   code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-  </style>
-  
-  
-  
-</head>
+<html lang="" xml:lang="">
+  <head>
+    <title>R is a Calculator</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Heike Hofmann" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
 
-<body class="shower list">
+# R is a Calculator
+## Hello World, this is R
+### Heike Hofmann
 
-  <header class="caption">
-    <h1>DS 202: Intro to R</h1>
-    <p>Heike Hofmann</p>
-  </header>
+---
 
-    
-  
-<section id="welcome-r" class="titleslide slide level1"><h2 class="shout">Welcome R</h2></section><section id="outline" class="slide level2">
-<h2>Outline</h2>
-<ul>
-<li>R is a calculator</li>
-<li>five commands to look at objects</li>
-<li>extracting pieces</li>
-<li>a first glimpse at data</li>
-</ul>
-</section><section id="the-r-language" class="slide level2">
-<h2>The R language</h2>
-<ul>
-<li>Learning a new language: grammar, vocabulary</li>
-<li>Loading, examining, summarizing data</li>
-<li>Creating data</li>
-<li>Getting help</li>
-<li>Miscellaneous useful stuff</li>
-</ul>
-</section><section id="section" class="slide level2 white">
-<h2></h2>
-<p><img class="cover" src="images/language.png" alt="", width=2000></p>
-</section><section id="grammar" class="slide level2">
-<h2>Grammar</h2>
-<ul>
-<li>Basic algebra is the same as calculator/mathematics</li>
-<li>explicit operators: <code>2*x</code> not <code>2x</code>, <code>2^p</code> instead of <code>2p</code></li>
-<li>Applying a function is similar</li>
-<li>Making a variable, use <code>&lt;-</code> or <code>=</code></li>
-<li>Everything in R is a vector</li>
-</ul>
-</section><section id="examples" class="slide level2">
-<h2>Examples</h2>
-<div class="double">
-<p class="double-flow">
-<p><strong>Math</strong></p>
-<p>Assignments <span class="math inline">\(x = \frac{2}{3}\)</span></p>
-<p>Functions <span class="math inline">\(\sqrt{x}\)</span></p>
-<p>Vectors <span class="math inline">\(y = \left( 1, 2, 3, 5\right)^t\)</span></p>
-<p>Indices <span class="math inline">\(y_1\)</span></p>
-<p>Mathematical Operators <span class="math inline">\(\sum_{i=1}^{4} y\)</span></p>
-<span class="math inline">\(2y\)</span>
-</p>
-<p class="double-flow">
-<p><strong>Code</strong></p>
-<pre><code>x &lt;- 2/3</code></pre>
-<pre><code>sqrt(x)</code></pre>
-<pre><code>y &lt;- c(1,2,3,5)</code></pre>
-<pre><code>y[1]</code></pre>
-<pre><code>sum(y)</code></pre>
-<pre><code>2*y</code></pre>
-</p>
-</div>
-</section><section id="your-turn-5-min" class="slide level2 white">
-<h2>Your Turn (5 min)</h2>
-<p><img class="cover" src="images/blue.jpeg" alt="" width=2000></p>
-<ul>
-<li><span style="color:white">Introduce vector <span class="math inline">\(x\)</span> defined as <span class="math inline">\(x = (4, 1, 3, 9)^t\)</span></span></li>
-<li><span style="color:white">Introduce vector <span class="math inline">\(y\)</span> defined as <span class="math inline">\(y = (1, 2, 3, 5)^t\)</span></span></li>
-<li><span style="color:white">Calculate the Euclidean distance between the two vectors <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>, defined as <span class="math display">\[
-d = \sqrt(\sum_{i=1}^4 (x_i - y_i)^2)
-\]</span></span></li>
-<li><span style="color:white">What does a negative index do?</span></li>
-<li><span style="color:white">What happens if an index is repeated multiple times, i.e. what is <code>x[c(1,1,1,2,2,2,3,3,3)]</code>?</span></li>
-</ul>
-</section><section id="vocabulary" class="slide level2">
-<h2>Vocabulary</h2>
-<ul>
-<li>What verbs (=functions) do you need to know?</li>
-<li>Loading data</li>
-<li>Accessing parts of things</li>
-<li>Statistical summaries</li>
-<li>…</li>
-</ul>
-</section><section id="r-reference-card" class="slide level2">
-<h2>R Reference Card</h2>
-<ul>
-<li>Download the R Reference Card from <a href="http://cran.r-project.org/doc/contrib/Short-refcard.pdf" class="uri">http://cran.r-project.org/doc/contrib/Short-refcard.pdf</a></li>
-<li>Open/Print it so that you can glance at it while working</li>
-</ul>
-</section><section id="very-basics" class="slide level2">
-<h2>Very basics</h2>
-<h3 id="getting-help-within-r">Getting help within R</h3>
-<p>If you want to know what a specific <code>command</code> is doing:</p>
-<pre><code>?command
-help(command) 
-help.search(command)</code></pre>
-<h3 id="getting-out">Getting out</h3>
-<pre><code>q()</code></pre>
-<p>Quits out of the console</p>
-</section><section id="loading-class-data" class="slide level2">
-<h2>Loading class data</h2>
-<ul>
-<li>Some R packages have in-built datasets</li>
-<li>For this class, there is an R package available on github</li>
-<li>Installing/Updating <code>classdata</code> package (once every so often):</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools::<span class="kw">install_github</span>(<span class="st">&quot;heike/classdata&quot;</span>)</code></pre></div>
-<ul>
-<li>Make the data available (every time you start R):</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(classdata)</code></pre></div>
-</section><section id="your-turn-5-min-1" class="slide level2 white">
-<h2>Your Turn (5 min)</h2>
-<p><img class="cover" src="images/blue.jpeg" alt="" width=2000></p>
-<p><span style="color:white">Install the package <code>classdata</code> on your machine <br> <span style="color:white">Make the package active in your current R session:</p>
-<pre><code>library(classdata)</code></pre>
-<p><span style="color:white">Check the R help on the dataset <code>cities</code><br> <span style="color:white">What happens if you just type in the name of the dataset?</p>
-</section><section id="inspecting-objects" class="slide level2">
-<h2>Inspecting objects</h2>
-<p>for object <code>x</code>, we can try out the following commands:</p>
-<ul>
-<li><code>x</code></li>
-<li><code>head(x)</code></li>
-<li><code>summary(x)</code></li>
-<li><code>str(x)</code></li>
-<li><code>dim(x)</code></li>
-</ul>
-<p><font color="darkblue">Try these commands out for yourself on the <code>cities</code> data.</font></p>
-</section><section id="the-cities-data" class="slide level2">
-<h2>The <code>cities</code> data</h2>
-<ul>
-<li><code>cities</code> is a data frame with columns (variables) and rows (records)</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(cities)</code></pre></div>
-<pre><code>## &#39;data.frame&#39;:    1207 obs. of  14 variables:
-##  $ City               : chr  &quot;Adel&quot; &quot;Albia&quot; &quot;Ames&quot; &quot;Amosa&quot; ...
-##  $ Population         : int  4067 3699 52541 5646 36876 2464 32059 2611 12899 25571 ...
-##  $ Violent.crime      : int  3 9 147 5 36 0 75 2 33 120 ...
-##  $ Murder             : int  0 0 0 0 0 0 1 0 0 1 ...
-##  $ Rape               : int  0 0 24 0 6 0 9 1 15 8 ...
-##  $ Robbery            : int  0 0 17 0 6 0 13 0 0 13 ...
-##  $ Aggravated.assault : int  3 9 106 5 24 0 52 1 18 98 ...
-##  $ Property.crime     : int  114 67 1465 99 806 18 832 23 412 1226 ...
-##  $ Burglary           : int  13 11 363 16 140 10 156 7 112 296 ...
-##  $ Larceny.theft      : int  93 53 1061 81 626 4 644 15 285 881 ...
-##  $ Motor.vehicle.theft: int  8 3 41 2 40 4 32 1 15 49 ...
-##  $ Arson              : int  0 2 5 3 4 0 6 0 3 23 ...
-##  $ State              : chr  &quot;iowa&quot; &quot;iowa&quot; &quot;iowa&quot; &quot;iowa&quot; ...
-##  $ Year               : int  2006 2006 2006 2006 2006 2006 2006 2006 2006 2006 ...</code></pre>
-</section><section id="extracting-parts-of-objects" class="slide level2">
-<h2>Extracting parts of objects</h2>
-<p>For object <code>x</code>, we can extract parts in the following manner:</p>
-<pre><code>x$variable
-x[, &quot;variable&quot;]
+
+# Outline
+
+
+
+
+- R is a calculator
+
+- five commands to look at objects
+
+- extracting pieces
+
+- a first glimpse at data
+
+---
+
+## The R language
+
+- Learning a new language: grammar, vocabulary
+
+- Loading, examining, summarizing data
+
+- Creating data
+
+- Getting help
+
+- Miscellaneous useful stuff
+
+
+---
+class: inverse, center
+
+
+&lt;img class="cover" src="images/language.png" alt="", width=2000&gt;
+
+---
+
+## Grammar
+
+- Basic algebra is the same as calculator/mathematics
+
+- explicit operators: `2*x` not `2x`,  `2^p` instead of `2p`
+
+- Applying a function is similar 
+
+- Making a variable, use `&lt;-` or `=`
+
+- Everything in R is a vector
+
+---
+
+## Examples
+
+| Math   | Type          | Code           | 
+|:--- |:-------------:|-------------:|
+|  `$$x = \frac{2}{3}$$` | Assignments      | `x &lt;- 2/3` |
+| `$$\sqrt{x}$$` | Functions  | `sqrt(x)` |
+| `$$y = \left( \begin{array}{c} 1\\4\\5\\2\end{array}\right)$$` | Vectors  | `y &lt;- c(1, 4, 5, 2) ` |
+| `$$y_2$$` | Indices | `y[2]`| 
+
+---
+
+## More Examples
+
+| Math   | Type          | Code           | 
+|:--- |:-------------:|-------------:|
+| `$$\sum_{i=1}^{4} y_i$$` | Mathematical Operators | `sum(y)` |
+| `$$2y$$` |  | `2*y` |
+
+---
+class: inverse
+
+## Your Turn (5 min) 
+
+
+- Introduce vector `\(x\)` defined as `$$x = \left( \begin{array}{c} 4\\1\\3\\9\end{array}\right)$$`
+
+- Introduce vector `\(y\)` defined as  `$$y = \left( \begin{array}{c} 1\\2\\3\\5\end{array}\right)$$`
+
+
+- Calculate the Euclidean distance between the two vectors `\(x\)` and `\(y\)`, defined as 
+
+`$$d = \sqrt{\sum_{i=1}^4 (x_i - y_i)^2}$$`
+
+---
+
+## Vocabulary 
+
+- What verbs (=functions) do you need to know?
+
+- Loading data
+
+- Accessing parts of things
+
+- Statistical summaries
+
+- ...
+
+---
+
+## R Reference Card
+
+- Download the R Reference Card from http://cran.r-project.org/doc/contrib/Short-refcard.pdf
+
+- Open/Print it so that you can glance at it while working
+
+
+
+
+---
+
+### Getting help within R
+
+If you want to know what a specific `command` is doing:
+
+
+```r
+?command
+
+help("command") 
+
+help.search("command")
+
+??command
+```
+
+&lt;br&gt;
+
+### Getting out
+
+
+```r
+q()
+```
+
+Quits out of the console
+
+
+---
+
+## Loading class data
+
+- Some R packages have in-built datasets
+
+- For this class, there is an R package available on github 
+
+- Installing/Updating `classdata` package (once every so often):
+
+```r
+remotes::install_github("heike/classdata")
+```
+
+- Make the data available (every time you start R):
+
+```r
+library(classdata)
+```
+
+
+---
+class: inverse
+## Your Turn (5 min) 
+
+
+- Install the package `classdata` on your machine &lt;br&gt;
+
+- Make the package active in your current R session:
+
+```r
+library(classdata)
+```
+
+- Check the R help on the dataset `fbi`&lt;br&gt;
+
+- What happens if you just type in the name of the dataset?
+
+
+---
+
+## Inspecting objects
+
+for object `x`, we can try out the following commands:
+
+- `x`
+
+- `head(x)`
+
+- `summary(x)`
+
+- `str(x)`
+
+- `dim(x)`
+
+&lt;br&gt;&lt;br&gt;&lt;br&gt;
+
+&lt;font color="darkblue"&gt;Try these commands out for yourself on the `fbi` data.&lt;/font&gt;
+
+
+---
+
+## `str` stands for *structure*
+
+- `str` shows us the **str**ucture of an object
+
+- fbi is a data frame with columns (variables) and rows (records)
+
+
+```r
+str(fbi)
+```
+
+```
+## 'data.frame':	23672 obs. of  7 variables:
+##  $ State        : chr  "Alabama" "Alabama" "Alabama" "Alabama" ...
+##  $ Abb          : chr  "AL" "AL" "AL" "AL" ...
+##  $ Year         : int  1961 1962 1963 1964 1965 1966 1967 1968 1969 1970 ...
+##  $ Population   : int  3302000 3358000 3347000 3407000 3462000 3517000 3540000 3566000 3531000 3444165 ...
+##  $ Type         : Factor w/ 8 levels "Aggravated.assault",..: 6 6 6 6 6 6 6 6 6 6 ...
+##  $ Count        : int  427 316 340 316 395 384 415 421 485 404 ...
+##  $ Violent.crime: logi  TRUE TRUE TRUE TRUE TRUE TRUE ...
+```
+
+---
+
+## Extracting parts of objects
+
+For object `x`, we can extract parts in the following manner:
+
+```
+x$variable
+x[, "variable"]
+
 x[rows, columns]
 x[1:5, 2:3]
-x[c(1,5,6), c(&quot;State&quot;,&quot;Year&quot;)]
-x$variable[rows]</code></pre>
-<p><code>rows</code> and <code>columns</code> are vectors of indices.</p>
-<p><font color="darkblue">Try these commands out for yourself on the <code>cities</code> data.</font></p>
-</section><section id="statistical-summaries" class="slide level2">
-<h2>Statistical summaries</h2>
-<p>Elements of the five point summary: <br> <code>mean, median, min, max, quartiles</code><br></p>
-<p>Other summary statistics:<br> <code>range, sd, var</code><br></p>
-<p>Summaries of two variables:<br> <code>cor, cov</code></p>
-</section><section id="your-turn" class="slide level2 white">
-<h2>Your turn</h2>
-<p><img class="cover" src="images/blue.jpeg" alt="" width=2000></p>
-<ul>
-<li><span style="color:white">Look at the first 10 data records of the <code>cities</code> data</li>
-<li><span style="color:white">Compute mean and standard deviation for the number of burglaries. Why do you get NAs? (read <code>?NA</code>)</li>
-<li><span style="color:white">Advanced: Read <code>?mean</code> and <code>?sd</code>, and fix missing value problem</li>
-</ul>
-</section><section id="your-turn---practice-to-ask-questions" class="slide level2 white">
-<h2>Your turn - practice to ask questions</h2>
-<p><img class="cover" src="images/blue.jpeg" alt="" width=2000></p>
-<p><span style="color:white">Write down questions that you could answer with this data 4 minutes by yourself, then pair up for another 3 minutes, and we’ll write ideas on the board</p>
-<p><span style="color:white">The types of crimes are defined on the UCR website, see <a href="http://www.ucrdatatool.gov/offenses.cfm" class="uri">http://www.ucrdatatool.gov/offenses.cfm</a></p>
-</section>
+x[c(1,5,6), c("State","Year")]
 
-  <!--
-  To hide progress bar from entire presentation
-  just remove “progress” element.
-  -->
-  <!-- <div class="progress"></div> -->
-  <script src="01_r-calculator_files/rmdshower/node_modules/shower/node_modules/shower-core/shower.min.js"></script>
-  <!-- Copyright © 2015 Yours Truly, Famous Inc. -->
-  <!-- Photos by John Carey, fiftyfootshadows.net -->
+x$variable[rows]
+```
+`rows` and `columns` are vectors of indices.
 
-    <script>renderMathInElement(document.body);</script>
-  
-  
-</body>
+&lt;br&gt;&lt;br&gt;&lt;br&gt;
+
+&lt;font color="darkblue"&gt;Try these commands out for yourself on the `fbi` data.&lt;/font&gt;
+
+---
+
+## Statistical summaries
+
+Elements of the five point summary: &lt;br&gt;
+`mean, median, min, max, quartiles`
+
+Other summary statistics:&lt;br&gt;
+`range, sd, var`
+
+Summaries of two variables:&lt;br&gt;
+`cor, cov`
+
+
+---
+class: inverse
+## Your turn 
+
+
+- Look at the first 10 data records of the `fbi` data
+
+- Compute mean and standard deviation for the number of counts. Why do you get NAs? (read `?NA`)
+
+- Advanced:  Read `?mean` and `?sd`, and fix missing value problem
+
+
+---
+class: inverse 
+## Your turn - practice to ask questions 
+
+
+Write down questions that you could answer with this data 4 minutes by yourself, then pair up for another 3 minutes, and we'll write ideas on the board
+
+
+
+The types of crimes are defined on the UCR website, see http://www.ucrdatatool.gov/offenses.cfm
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
 </html>
