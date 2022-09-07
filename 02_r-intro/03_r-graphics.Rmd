@@ -1,5 +1,5 @@
 ---
-title: "Stat 579: Graphics with ggplot2"
+title: "More graphics with ggplot2"
 author: Heike Hofmann
 date: "`r Sys.Date()`"
 output:
@@ -43,11 +43,11 @@ library(classdata)
 
 ## Facetting
 
-Can facet to display plots for different subsets: `facet_wrap`, `facet_grid`
+Use facet to display plots for different subsets: `facet_wrap`, `facet_grid`
 
-```{r, message=FALSE}
-ggplot(aes(x = Year, y = Murder), data=fbiwide) +
-  facet_wrap(~State) +
+```{r, message=FALSE, fig.height = 5, fig.width=10}
+ggplot(aes(x = year, y = homicide), data=fbiwide) +
+  facet_wrap(~state, ncol = 11) +
   geom_point()
 ```
 
@@ -88,7 +88,7 @@ Use the `fbiwide` data from the package `classdata` for this your turn.
 ## Boxplots
 
 ```{r, echo=FALSE, warning=FALSE, fig.width = 8, fig.height = 5}
-ggplot(data = fbi, aes(x = Type, y = log10(Count))) + geom_boxplot() + coord_flip()
+ggplot(data = fbi, aes(x = type, y = log10(count))) + geom_boxplot() + coord_flip()
 ```
 
 ---
@@ -104,13 +104,11 @@ ggplot(data = fbi, aes(x = Type, y = log10(Count))) + geom_boxplot() + coord_fli
 ## Boxplots
 
 - are used for group comparisons and outlier identifications
-
 - usually only make sense in form of side-by-side boxplots.
-
 - `geom_boxplot` in ggplot2 needs `x` and `y` variable (`y` is measurement, `x` is categorical)
 
-```{r}
-ggplot(data = fbi, aes(x = Type, y = log10(Count))) +
+```{r, warning = FALSE, fig.height = 5}
+ggplot(data = fbi, aes(x = type, y = log10(count))) +
   geom_boxplot() + 
   coord_flip()
 ```
@@ -147,7 +145,7 @@ class: inverse
 Histograms: 
 
 ```{r, fig.width=4, fig.height=3}
-ggplot(fbiwide, aes(x = Motor.vehicle.theft)) + 
+ggplot(fbiwide, aes(x = motor_vehicle_theft)) + 
   geom_histogram(binwidth=5000) +
   ggtitle("binwidth = 5000")
 ```
@@ -159,7 +157,7 @@ ggplot(fbiwide, aes(x = Motor.vehicle.theft)) +
 Histograms: 
 
 ```{r, fig.width=4, fig.height=3}
-ggplot(fbiwide, aes(x = Motor.vehicle.theft)) + 
+ggplot(fbiwide, aes(x = motor_vehicle_theft)) + 
   geom_histogram(binwidth=1000) +
   ggtitle("binwidth = 1000")
 ```
@@ -169,29 +167,12 @@ Always change the bin width! There is no perfect bin width, but a lot of differe
 
 ## Barchart
 
-```{r}
-ggplot(fbi, aes(x = Type)) + 
-  geom_bar(aes(weight= Count)) +
+```{r fig.height = 4}
+ggplot(fbi, aes(x = type)) + 
+  geom_bar(aes(weight= count)) +
   coord_flip()
 ```
 
----
-
-## Weighted vs Unweighted Barcharts
-
-Unweighted/regular barchart: categorical variable $X$ with $K$ levels: $x_1, ..., x_n \in \{C_1, ..., C_k\}$
-
-A weighted barchart has an additional numeric variable $W$ of weights $w_1, ..., w_n$ with $w_i \ge 0, 1 \ge i \ge n$.
-
-Mathematically, both barcharts are a visualization of a set of tuples of the form $(C_k, y_k)$, where for $1 \ge k \ge K$:
-
-regular barchart: 
-$$y_k = \sum_{i=1}^n I{(x_i = C_k)}$$
-
-Weighted barchart:
-$$y_k = \sum_{i=1}^n w_i \cdot I({x_i = C_k})$$
-
-where $I$ is the indicator function, i.e. $I(x) = 1$ if $x$ is true, and $I(x) = 0$ if $x$ is false
 ---
 
 ## Histograms and barcharts
@@ -214,7 +195,7 @@ class: inverse
 ## Your turn 
 
 
-- Use the `fbi` data set to draw a barchart of the variable `Violent Crime`. Make the height of the bars dependent on the number of reports (use `weight`). Then facet by type (does the result match your expectation? good! get rid of facetting). Color bars by `Type`. 
+- Use the `fbi` data set to draw a barchart of the variable `violent_crime`. Make the height of the bars dependent on the number of reports (use `weight`). Then facet by type (does the result match your expectation? good! get rid of facetting). Color bars by `type`. 
 
 - Use the `fbi` data set to draw a histogram of the number of reports. Facet by type, make sure to use individual scales for the panels. 
 
