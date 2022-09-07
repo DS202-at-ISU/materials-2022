@@ -9,56 +9,53 @@ output:
       highlightLines: true
       countIncrementalSlides: false
 ---
-
-```{r setup, echo=FALSE}
-knitr::opts_chunk$set(fig.width=3.5, fig.height=3.5)
-```
-
-## Data Exploration
-
-- asking good questions is important for any data exploration: "your data won't speak unless you ask the right questions"
-
-- a data exploration is a cycle of asking questions, looking at the answers, and deriving new questions from them
-
-- for a sound exploration: start by checking individual variables, then move on to higher dimensions
+class: inverse, middle, center
+# Looking at data
 
 ---
-class: center, middle
-# An example exploration
-
-
----
-class: inverse
-# Your turn 
-
-
-- Write down questions that you could answer with this data 4 minutes by yourself, then pair up for another 3 minutes, and we'll write ideas on the board
-
-```{r}
-library(classdata)
-head(fbiwide)
-```
+class: inverse, middle, center
+## Questions for the fbi data
 
 ---
 
-# Plan for answers
+## Plan for answers
 
 - Explore how one (or more) variables are distributed: *barchart or histogram*
+
 - Explore how two variables are related:  *scatterplot, boxplot, tile plot*
+
 - Explore how two variables are related, conditioned on other variables: *facetting, color & other aesthetics*
 
 
-We will be using the `ggplot2` framework for plotting
+---
+
+## Different version of the data
+
+For the exploration, we will use a different shape of the `fbi` data - a wide form:
 
 ```{r}
-library(ggplot2)
+library(classdata)
+str(fbiwide)
 ```
 
 ---
 
-# Why `ggplot2`
+## Scatterplots
 
-- Wildly popular package for statistical graphics: over 2.5 million downloads from CRAN  (several thousand times per day)
+- need two continuous variables
+
+- we'll be using the `ggplot2` framework for plotting
+
+---
+class: inverse, middle, center
+# Why `ggplot2`?
+
+---
+
+## Why `ggplot2`
+
+.pull-left[
+- Wildly popular package for statistical graphics: over 1.5 million **monthly**  downloads from CRAN since 2019 (several thousand times per day)
 
 - Developed by Hadley Wickham (An ISU Alumni)
 
@@ -67,102 +64,154 @@ library(ggplot2)
 - Constructs plots using the concept of layers
 
 - Supports a wide variety plot types and extensions
+]
 
-- Ported to different languages, e.g. `ggpy`  (`seaborn` is also grammar of graphis based)
-\medskip
+.pull-right[
+```{r echo = FALSE, message = FALSE}
+library(tidyverse)
+downloads <- cranlogs::cran_downloads(packages = "ggplot2", from = "2007-01-01", to = "2022-08-31")
+downloads$month <- lubridate::month(downloads$date)
+downloads$year <- lubridate::year(downloads$date)
+downloads %>% group_by(year, month) %>% summarize( n = sum(count)) %>% 
+  ggplot(aes(x = year+month/12, y = n/1000000)) + geom_point() + 
+  ylab("Number of monthly downloads (in Millions)") +
+  ggtitle("Number of monthly downloads of ggplot2") +
+  theme_bw() +
+  xlab("Time") +
+  scale_x_continuous(breaks=c(2007, 2010, 2013, 2016, 2019, 2022))
+```
+]
+
+
+<br>
 
 - http://ggplot2.org/book/ or Hadley's book *ggplot2: Elegant Graphics for Data Analysis* for reference 
 
 
----
 
-# `ggplot` Function
-
-The `ggplot` function is the basic workhorse of ggplot2
-
-- Produces all plot types available with ggplot2
-
-- Allows for plotting options within the function statement
-
-- Creates an object that can be saved
-
-- Plot layers can be added to modify plot complexity
 
 ---
 
-# `ggplot` Structure
+## Grammar of Graphics
 
-The `ggplot` function has the basic syntax:
+A graphical representation (plot) consists of:
 
-`ggplot(data, mappings) + geom_type(options)`
+1. **mappings** (`aes`):  data variables are mapped to graphical elements
 
-- data: dataset to be used
+2. **layers**:  geometric elements (`geoms`, such as points, lines, 
+rectangles, text, ...) and statistical transformations (`stats`, are identity, counts, bins, ...)
 
-- mappings: determines which variables are connected to which plot elements, mappings are done with `aes()`
+3. **scales**: map values in the data space to values in an aesthetic space (e.g. color, size, shape, but also position)
 
-- type: determines type of the plot, e.g. `point`, `line`, `bar`
+4. **coordinate system** (`coord`): normally Cartesian, but pie charts use e.g. polar coordinates
 
-- options: there are so, so many options!
+5. **facetting**: for small multiples (subsets) and their arrangement
+
+6. **theme**: fine-tune display items, such as font and its size, color of background, margins, ...
 
 ---
 
-# Scatterplots in `ggplot2`
+## Scatterplots in `ggplot2`
 
 `aes` allows us to specify mappings; scatterplots need a mapping for `x` and a mapping for `y`:
 
-```{r}
-ggplot(data = fbiwide, aes(x = Burglary, y = Murder)) +
+```
+ggplot(data = fbiwide, aes(x = burglary, y = homicide)) +
+  geom_point()
+```  
+
+```
+ggplot(data = fbiwide, aes(x = log(burglary), y = log(homicide))) +
+  geom_point()
+```  
+
+```
+ggplot(data = fbiwide, aes(x = log(burglary), 
+                           y = log(motor_vehicle_theft))) +
   geom_point()
 ```  
 
 ---
-class: inverse
-# Your turn 
 
-
-- Draw a scatterplot of the number of burglaries by murders.
-
-- Adjust the numbers of the above scatterplot to show log transformed numbers. How can we interpret the numbers on the axes?
-
-- Draw a scatterplot of the log transformed number of burglaries by motor vehicle thefts.
-
----
-
-# Revision - Interpreting Scatterplots
+## Revision - Interpreting Scatterplots
 
 - Big patterns
-
     - Form and direction
-
     - Strength
-
+    
 - Small patterns
 
 - Deviations from the pattern
-
     - Outliers
     
 ---
 
-# Aesthetics
+### **Form**
 
-Can map other variables to size, colour, shape, ....
+Is the plot linear?  Is the plot curved?  Is there a distinct pattern in the plot? Are there multiple groups?
 
-```{r}
-ggplot(aes(x = log(Burglary), y = log(Motor.vehicle.theft),
-           colour=Year), data=fbiwide) + geom_point()
-```           
+
+### **Strength**
+
+Does the plot follow the form very closely?  Or is there a lot of variation?   
+
+### **Direction**
+Is the pattern increasing?  Is the plot decreasing?
+
+*Positively:* Above (below) average in one variable tends to be associated with above (below) average in another variable.
+
+*Negatively:* Opposite pattern.
 
 ---
 
-# Your turn 
+<img class="cover" src="images/positive.png" alt="" width=500>
 
-- Draw a scatterplot of the log transformed number of burglaries by motor vehicle thefts. Map the state variable to colour. Why is this a terrible idea?
+> 1. <font color="darkorange">Form: Linear</font>
+> 2. <font color="darkorange">Strength: Strong, very close to a straight line.</font>
+> 3. <font color="darkorange">Direction: Two variables are positively associated.</font>
+> 4. <font color="darkorange">No outliers.</font>
 
-- Draw a scatterplot of the log transformed number of burglaries by motor vehicle thefts. Map Population to size. How do we interpret the output?
+---
 
-- Which other aesthetics are there? Have a look at the [RStudio cheat sheet on visualization](https://www.rstudio.com/resources/cheatsheets/) 
+<img class="cover" src="images/negative.png" alt="" width=500>
+
+> 1. <font color="darkorange">Form: Roughly linear, two distinct groups (more than 40% and less than 40%.)</font>
+> 2. <font color="darkorange">Strength: not strong.  Data points are scattered.
+</font>
+> 3. <font color="darkorange">Direction: Negatively Associated.
+</font>
+> 4. <font color="darkorange">Outliers: None.</font>
+
+---
+
+## Aesthetics
+
+Can map other variables to size or colour
+
+```
+ggplot(aes(x = log(burglary), y = log(motor_vehicle_theft),
+           colour=state), data=fbiwide) + geom_point()
+
+ggplot(aes(x = log(burglary), y = log(motor_vehicle_theft),
+           colour=year), data=fbiwide) + geom_point()
+```
+
+```
+ggplot(aes(x = log(burglary), y = log(motor_vehicle_theft),
+           size=population), data=fbiwide) + geom_point()
+```
+
+other aesthetics: shape
+
+---
+class: inverse
+## Your turn
 
 
-**Stretch goal**: Draw a histogram of the state populations. 
+- Work through each of the `ggplot2` example plots
+
+- Note: you can turn off a legend (e.g. when there are 50 colors) by adding 
+` + theme(legend.position = "none")` to the plot command
+
+- Try variations of the plots to find answers (some of) your questions. 
 
