@@ -213,5 +213,5 @@ class: inverse
 - Note: you can turn off a legend (e.g. when there are 50 colors) by adding 
 ` + theme(legend.position = "none")` to the plot command
 
-- Try variations of the plots to find answers (some of) your questions. 
+- Try variations of the plots to find answers to (some of) your questions. 
 
