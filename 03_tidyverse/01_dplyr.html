@@ -136,6 +136,43 @@ fbi %&gt;% filter(type=="burglary", year==2016) %&gt;% head()
 ## 5 California        6 CA          2016   39296476 burglary 188304 FALSE        
 ## 6 Colorado          7 CO          2016    5530105 burglary  23825 FALSE
 ```
+---
+
+## The pipe operator `%&gt;%`
+
+
+`f(x) %&gt;% g(y)` is equivalent to `g(f(x), y)`
+
+i.e. the output of one function is used as input to the next function. This function can be the identity
+
+Consequences:
+
+- `x %&gt;% f(y)` is the same as `f(x, y)`
+
+- statements of the form `k(h(g(f(x, y), z), u), v, w)` become
+`x %&gt;% f(y) %&gt;% g(z) %&gt;% h(u) %&gt;% k(v, w)`
+
+- read `%&gt;%` as "then do"
+
+---
+
+## Using the pipe `%&gt;%`
+
+```
+ggplot(data = filter(fbi, type=="homicide"), 
+aes(x = year, y = count)) + geom_point()
+```
+
+becomes
+
+```
+library(tidyverse)
+
+fbi %&gt;% 
+  filter(type=="homicide") %&gt;%
+  ggplot(aes(x = year, y = count)) + 
+    geom_point()
+```
 
 ---
 
