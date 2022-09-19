@@ -1,266 +1,298 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <title>dplyr examples</title>
-  <meta charset="utf-8">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="02_dplyr-examples_files/rmdshower/node_modules/shower-ribbon/styles/screen-4x3.css">
-  <link rel="stylesheet" href="02_dplyr-examples_files/rmdshower/style-common.css">
-  <link rel="stylesheet" href="02_dplyr-examples_files/rmdshower/style-ribbon.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.js"></script>
-  <script src="02_dplyr-examples_files/rmdshower/auto-render.min.js" type="text/javascript"></script>
-  
-  
-    <style type="text/css">
-   div.sourceCode { overflow-x: auto; }
-   table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-     margin: 0; padding: 0; vertical-align: baseline; border: none; }
-   table.sourceCode { width: 100%; line-height: 100%; }
-   td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-   td.sourceCode { padding-left: 5px; }
-   code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-   code > span.dt { color: #902000; } /* DataType */
-   code > span.dv { color: #40a070; } /* DecVal */
-   code > span.bn { color: #40a070; } /* BaseN */
-   code > span.fl { color: #40a070; } /* Float */
-   code > span.ch { color: #4070a0; } /* Char */
-   code > span.st { color: #4070a0; } /* String */
-   code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-   code > span.ot { color: #007020; } /* Other */
-   code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-   code > span.fu { color: #06287e; } /* Function */
-   code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-   code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-   code > span.cn { color: #880000; } /* Constant */
-   code > span.sc { color: #4070a0; } /* SpecialChar */
-   code > span.vs { color: #4070a0; } /* VerbatimString */
-   code > span.ss { color: #bb6688; } /* SpecialString */
-   code > span.im { } /* Import */
-   code > span.va { color: #19177c; } /* Variable */
-   code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-   code > span.op { color: #666666; } /* Operator */
-   code > span.bu { } /* BuiltIn */
-   code > span.ex { } /* Extension */
-   code > span.pp { color: #bc7a00; } /* Preprocessor */
-   code > span.at { color: #7d9029; } /* Attribute */
-   code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-   code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-   code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-   code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-  </style>
-  
-  
-  
-</head>
+<html lang="" xml:lang="">
+  <head>
+    <title>dplyr examples: happiness</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Heike Hofmann" />
+    <script src="libs/header-attrs-2.14/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
 
-<body class="shower list">
+# dplyr examples: happiness
+### Heike Hofmann
 
-  <header class="caption">
-    <h1>dplyr examples</h1>
-    <p>Heike Hofmann</p>
-  </header>
+---
 
-    
-  
-<section id="happy-data" class="titleslide slide level1"><h2 class="shout">Happy data</h2></section><section id="outline" class="slide level2">
-<h2>Outline</h2>
-<ul>
-<li>cleaning and upgrading the HAPPY data</li>
-<li>working with <code>group_by</code> and <code>summarise</code></li>
-</ul>
-</section><section id="the-happy-data-from-gss" class="slide level2">
-<h2>The Happy data from GSS</h2>
-<p>The General Social Survey (GSS) has been run by NORC every other year since 1972 to keep track of current opinions across the United States.</p>
-<p>An excerpt of the GSS data is available from our course website. Dowload the file <a href="">HAPPY.rds</a> and put the file into a folder called “data” next to your Rmd file. The following command is going to load the data into your R session:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyverse)
-HAPPY &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;data/HAPPY.rds&quot;</span>)</code></pre></div>
-<p>You can find a codebook with explanations for each of the variables at <a href="https://gssdataexplorer.norc.org/" class="uri">https://gssdataexplorer.norc.org/</a></p>
-</section><section id="a-first-look" class="slide level2">
-<h2>A first look</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">HAPPY %&gt;%<span class="st"> </span><span class="kw">str</span>()</code></pre></div>
-<pre><code>## &#39;data.frame&#39;:    62466 obs. of  11 variables:
-##  $ HAPPY   : chr  &quot;NOT TOO HAPPY&quot; &quot;NOT TOO HAPPY&quot; &quot;PRETTY HAPPY&quot; &quot;NOT TOO HAPPY&quot; ...
-##  $ YEAR    : int  1972 1972 1972 1972 1972 1972 1972 1972 1972 1972 ...
-##  $ AGE     : chr  &quot;23&quot; &quot;70&quot; &quot;48&quot; &quot;27&quot; ...
-##  $ SEX     : chr  &quot;FEMALE&quot; &quot;MALE&quot; &quot;FEMALE&quot; &quot;FEMALE&quot; ...
-##  $ MARITAL : chr  &quot;NEVER MARRIED&quot; &quot;MARRIED&quot; &quot;MARRIED&quot; &quot;MARRIED&quot; ...
-##  $ DEGREE  : chr  &quot;BACHELOR&quot; &quot;LT HIGH SCHOOL&quot; &quot;HIGH SCHOOL&quot; &quot;BACHELOR&quot; ...
-##  $ FINRELA : chr  &quot;AVERAGE&quot; &quot;ABOVE AVERAGE&quot; &quot;AVERAGE&quot; &quot;AVERAGE&quot; ...
-##  $ HEALTH  : chr  &quot;GOOD&quot; &quot;FAIR&quot; &quot;EXCELLENT&quot; &quot;GOOD&quot; ...
-##  $ WTSSALL : num  0.445 0.889 0.889 0.889 0.889 ...
-##  $ PARTYID : chr  &quot;IND,NEAR DEM&quot; &quot;NOT STR DEMOCRAT&quot; &quot;INDEPENDENT&quot; &quot;NOT STR DEMOCRAT&quot; ...
-##  $ POLVIEWS: chr  &quot;IAP&quot; &quot;IAP&quot; &quot;IAP&quot; &quot;IAP&quot; ...</code></pre>
-</section><section id="the-variable-happy" class="slide level2">
-<h2>The variable <code>HAPPY</code></h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">HAPPY %&gt;%<span class="st"> </span>
-<span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> HAPPY)) +<span class="st"> </span><span class="kw">geom_bar</span>()</code></pre></div>
-<p><img src="02_dplyr-examples_files/figure-revealjs/unnamed-chunk-3-1.png" width="768" /></p>
-</section><section id="cleaning-up-happy" class="slide level2">
-<h2>Cleaning up <code>HAPPY</code></h2>
-<ul>
-<li>make all strings lowercase: <code>tolower</code></li>
-<li>convert into a factor variable, levels are in right order</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">HAPPY &lt;-<span class="st"> </span>HAPPY %&gt;%<span class="st"> </span><span class="kw">mutate</span>(
-  <span class="dt">happy =</span> <span class="kw">factor</span>(<span class="kw">tolower</span>(HAPPY))
-) %&gt;%<span class="st"> </span><span class="kw">select</span>(-HAPPY)
 
-<span class="kw">head</span>(HAPPY)</code></pre></div>
-<pre><code>##   YEAR AGE    SEX       MARITAL         DEGREE       FINRELA    HEALTH
-## 1 1972  23 FEMALE NEVER MARRIED       BACHELOR       AVERAGE      GOOD
-## 2 1972  70   MALE       MARRIED LT HIGH SCHOOL ABOVE AVERAGE      FAIR
-## 3 1972  48 FEMALE       MARRIED    HIGH SCHOOL       AVERAGE EXCELLENT
-## 4 1972  27 FEMALE       MARRIED       BACHELOR       AVERAGE      GOOD
-## 5 1972  61 FEMALE       MARRIED    HIGH SCHOOL ABOVE AVERAGE      GOOD
-## 6 1972  26   MALE NEVER MARRIED    HIGH SCHOOL ABOVE AVERAGE      GOOD
-##   WTSSALL          PARTYID POLVIEWS         happy
-## 1  0.4446     IND,NEAR DEM      IAP not too happy
-## 2  0.8893 NOT STR DEMOCRAT      IAP not too happy
-## 3  0.8893      INDEPENDENT      IAP  pretty happy
-## 4  0.8893 NOT STR DEMOCRAT      IAP not too happy
-## 5  0.8893  STRONG DEMOCRAT      IAP  pretty happy
-## 6  0.4446     IND,NEAR DEM      IAP  pretty happy</code></pre>
-</section><section id="data-cleaning" class="slide level2">
-<h2>Data Cleaning</h2>
-<ol type="1">
-<li>Data cleaning: the values “IAP”, “DK” and “NA” all encode missing values. We have to replace all of these instances by the value <code>NA</code>.</li>
-<li>Check the type of the variable and cast into the right type.</li>
-<li>Bring all levels of factors into a sensible order.</li>
-</ol>
-</section><section id="recoding-missing-values" class="slide level2">
-<h2>Recoding missing values</h2>
-<p>Object in <code>replace</code> does not have to be a variable, a data frame can also be used:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">HAPPY &lt;-<span class="st"> </span><span class="kw">replace</span>(HAPPY, HAPPY %in%<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;IAP&quot;</span>, <span class="st">&quot;DK&quot;</span>, <span class="st">&quot;NA&quot;</span>), <span class="ot">NA</span>)</code></pre></div>
-<p>the remaining cleaning is just pretty tedious manual work …</p>
-</section><section id="the-variable-age" class="slide level2">
-<h2>The variable <code>AGE</code></h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">HAPPY &lt;-<span class="st"> </span>HAPPY %&gt;%<span class="st"> </span><span class="kw">mutate</span>(
-  <span class="dt">age =</span> <span class="kw">replace</span>(AGE, AGE ==<span class="st"> &quot;89 AND OLDER&quot;</span>, <span class="dv">89</span>),
-  <span class="dt">age =</span> <span class="kw">as.numeric</span>(age)
-) %&gt;%<span class="st"> </span><span class="kw">select</span>(-AGE)
+# The Happy data from GSS
 
-HAPPY %&gt;%<span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> age)) +<span class="st"> </span><span class="kw">geom_histogram</span>(<span class="dt">binwidth=</span><span class="dv">1</span>)</code></pre></div>
-<p><img src="02_dplyr-examples_files/figure-revealjs/unnamed-chunk-6-1.png" width="480" /></p>
-</section><section id="the-variable-degree" class="slide level2">
-<h2>The variable <code>DEGREE</code></h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">HAPPY &lt;-<span class="st"> </span>HAPPY %&gt;%<span class="st"> </span><span class="kw">mutate</span>(
-  <span class="dt">degree =</span> <span class="kw">factor</span>(<span class="kw">tolower</span>(DEGREE)),
-  <span class="dt">degree =</span> <span class="kw">factor</span>(degree, <span class="dt">levels=</span><span class="kw">c</span>(<span class="st">&quot;lt high school&quot;</span>, <span class="st">&quot;high school&quot;</span>, <span class="st">&quot;junior college&quot;</span>, <span class="st">&quot;bachelor&quot;</span>, <span class="st">&quot;graduate school&quot;</span>))
-) %&gt;%<span class="st"> </span><span class="kw">select</span>(-DEGREE)
+The General Social Survey (GSS) has been run by NORC every other year since 1972 to keep track of current opinions across the United States. 
 
-HAPPY %&gt;%<span class="st"> </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> degree)) +<span class="st"> </span><span class="kw">geom_bar</span>()</code></pre></div>
-<p><img src="02_dplyr-examples_files/figure-revealjs/unnamed-chunk-7-1.png" width="480" /></p>
-</section><section id="working-with-happy" class="slide level2">
-<h2>Working with <code>happy</code></h2>
-<p><code>happy</code> data included in the <code>classdata</code> package</p>
-<p>upgrade the package: <code>devtools::install_github(&quot;heike/classdata&quot;)</code></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(classdata)
-<span class="kw">data</span>(<span class="st">&quot;happy&quot;</span>, <span class="dt">package=</span><span class="st">&quot;classdata&quot;</span>)
-<span class="kw">head</span>(happy)</code></pre></div>
-<pre><code>##           happy year age    sex       marital         degree       finrela
-## 1 not too happy 1972  23 female never married       bachelor       average
-## 2 not too happy 1972  70   male     separated lt high school above average
-## 3  pretty happy 1972  48 female     separated    high school       average
-## 4 not too happy 1972  27 female     separated       bachelor       average
-## 5  pretty happy 1972  61 female     separated    high school above average
-## 6  pretty happy 1972  26   male never married    high school above average
-##      health polviews          partyid wtssall
-## 1      good     &lt;NA&gt;     ind,near dem  0.4446
-## 2      fair     &lt;NA&gt; not str democrat  0.8893
-## 3 excellent     &lt;NA&gt;      independent  0.8893
-## 4      good     &lt;NA&gt; not str democrat  0.8893
-## 5      good     &lt;NA&gt;  strong democrat  0.8893
-## 6      good     &lt;NA&gt;     ind,near dem  0.4446</code></pre>
-</section><section id="summarising-happiness" class="slide level2">
-<h2>Summarising Happiness</h2>
-<p>Use scores for <code>happy</code> factor to summarise overall happiness level, i.e. <code>not too happy</code> = 1, <code>pretty happy</code> = 2, and <code>very happy</code> = 3</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">happy %&gt;%<span class="st"> </span><span class="kw">summarise</span>(
-  <span class="dt">m.happy =</span> <span class="kw">mean</span>(<span class="kw">as.numeric</span>(happy), <span class="dt">na.rm=</span><span class="ot">TRUE</span>)
-  )</code></pre></div>
-<pre><code>##    m.happy
-## 1 2.186969</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">happy %&gt;%<span class="st"> </span><span class="kw">group_by</span>(sex) %&gt;%<span class="st"> </span><span class="kw">summarise</span>(
-  <span class="dt">m.happy =</span> <span class="kw">mean</span>(<span class="kw">as.numeric</span>(happy), <span class="dt">na.rm=</span><span class="ot">TRUE</span>)
-  )</code></pre></div>
-<pre><code>## # A tibble: 2 x 2
-##   sex    m.happy
-##   &lt;fct&gt;    &lt;dbl&gt;
-## 1 female    2.19
-## 2 male      2.18</code></pre>
-</section><section id="your-turn-group_by-and-summarise" class="slide level2 white">
-<h2>Your turn: group_by and summarise</h2>
-<p><img class="cover" src="images/blue.jpeg" alt="" width=2000></p>
-<p><span style="color:white">For this your turn use the <code>happy</code> data from the <code>classdata</code> package </span></p>
-<ul>
-<li><span style="color:white">How do average happiness levels change over age?</span></li>
-<li><span style="color:white">Are Republicans or Democrats happier? Compare average happiness levels over <code>partyid</code>.</span></li>
-<li><span style="color:white">How are financial relations associated with average happiness levels? Is this association different for men and women?</span><br><br></li>
-<li><span style="color:white">Find a plot that shows the differences for each one of the summaries.</span></li>
-</ul>
-</section><section id="your-turn-asking-questions" class="slide level2 white">
-<h2>Your turn: asking questions</h2>
-<p><img class="cover" src="images/blue.jpeg" alt="" width=2000></p>
-<p><span style="color:white">For this your turn use the <code>happy</code> data from the <code>classdata</code> package </span></p>
-<ul>
-<li><span style="color:white">Investigate what other variable(s) might be associated with happiness. Plot it.</span></li>
-<li><span style="color:white">Submit your code in Canvas for one point of extra credit.</span></li>
-</ul>
-</section><section id="helper-functions-1" class="slide level2">
-<h2>Helper functions (1)</h2>
-<ul>
-<li><code>n()</code> provides the number of rows of a subset:</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">happy %&gt;%<span class="st"> </span><span class="kw">group_by</span>(sex) %&gt;%<span class="st"> </span><span class="kw">summarise</span>(<span class="dt">n =</span> <span class="kw">n</span>())</code></pre></div>
-<pre><code>## # A tibble: 2 x 2
+An excerpt of the GSS data called `happy` is available from the `classdata` package:
+
+
+```r
+remotes::install_github("heike/classdata")
+```
+
+
+```r
+library(classdata)
+head(happy)
+```
+
+```
+##   year age         degree       finrela         happy    health       marital
+## 1 1972  23       bachelor       average not too happy      good never married
+## 2 1972  70 lt high school above average not too happy      fair       married
+## 3 1972  48    high school       average  pretty happy excellent       married
+## 4 1972  27       bachelor       average not too happy      good       married
+## 5 1972  61    high school above average  pretty happy      good       married
+## 6 1972  26    high school above average  pretty happy      good never married
+##      sex polviews          partyid wtssall wtssnr
+## 1 female     &lt;NA&gt;     ind,near dem       7   1147
+## 2   male     &lt;NA&gt; not str democrat      54   1147
+## 3 female     &lt;NA&gt;      independent      54   1147
+## 4 female     &lt;NA&gt; not str democrat      54   1147
+## 5 female     &lt;NA&gt;  strong democrat      54   1147
+## 6   male     &lt;NA&gt;     ind,near dem       7   1147
+```
+
+You can find a codebook with explanations for each of the variables at https://gssdataexplorer.norc.org/
+
+---
+class: inverse
+# Your Turn
+
+Load the `happy` data from the `classdata` package.
+
+- how many variables, how many observations does the data have? What do the variables mean? 
+
+- Plot the variable `happy`. Introduce a new variable `nhappy` that has values 1 for `not too happy`, 2 for `pretty happy`, 3 for `very happy` and `NA` for missing values. There are multiple ways to get to that. Avoid `for` loops.
+
+- Based on the newly introduced numeric scores, what is the average happiness of respondents?
+
+---
+class: inverse
+# Your turn
+
+- how does average happiness change over the course of a life time? Is this relationship different for men and women? Draw plots.
+
+- are people now happier than ten years ago? How is happiness related to time?
+
+---
+class: inverse
+# Your Turn
+
+- Are Republicans or Democrats happier? Compare average happiness levels over `partyid`.
+
+- How are financial relations associated with average happiness levels? Is this association different for men and women?
+
+- Find a plot that shows the differences for each one of the summaries.
+
+---
+class: inverse
+# Your turn: asking questions 
+
+
+- What other variable(s) might be associated with happiness? Plot it.
+
+- Submit your code in Canvas for one point of extra credit.
+
+---
+
+# Helper functions (1)
+
+- `n()` provides the number of rows of a subset:
+
+```r
+library(dplyr)
+happy %&gt;% group_by(sex) %&gt;% summarise(n = n())
+```
+
+```
+## # A tibble: 3 × 2
 ##   sex        n
 ##   &lt;fct&gt;  &lt;int&gt;
-## 1 female 34904
-## 2 male   27562</code></pre>
-<ul>
-<li><code>tally()</code> is a combination of <code>summarise</code> and <code>n</code></li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">happy %&gt;%<span class="st"> </span><span class="kw">group_by</span>(sex) %&gt;%<span class="st"> </span><span class="kw">tally</span>()</code></pre></div>
-<pre><code>## # A tibble: 2 x 2
+## 1 male   30350
+## 2 female 38404
+## 3 &lt;NA&gt;      92
+```
+
+- `tally()` is a combination of `summarise` and `n`
+
+```r
+happy %&gt;% group_by(sex) %&gt;% tally()
+```
+
+```
+## # A tibble: 3 × 2
 ##   sex        n
 ##   &lt;fct&gt;  &lt;int&gt;
-## 1 female 34904
-## 2 male   27562</code></pre>
-</section><section id="helper-functions-2" class="slide level2">
-<h2>Helper functions (2)</h2>
-<ul>
-<li><code>count()</code> is a further shortcut of <code>group_by</code> and <code>tally</code>:</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">happy %&gt;%<span class="st"> </span><span class="kw">count</span>(sex, degree)</code></pre></div>
-<pre><code>## # A tibble: 12 x 3
-##    sex    degree             n
-##    &lt;fct&gt;  &lt;fct&gt;          &lt;int&gt;
-##  1 female lt high school  7500
-##  2 female high school    18419
-##  3 female junior college  2047
-##  4 female bachelor        4731
-##  5 female graduate        2112
-##  6 female &lt;NA&gt;              95
-##  7 male   lt high school  5825
-##  8 male   high school    13598
-##  9 male   junior college  1425
-## 10 male   bachelor        4279
-## 11 male   graduate        2357
-## 12 male   &lt;NA&gt;              78</code></pre>
-</section>
+## 1 male   30350
+## 2 female 38404
+## 3 &lt;NA&gt;      92
+```
 
-  <!--
-  To hide progress bar from entire presentation
-  just remove “progress” element.
-  -->
-  <!-- <div class="progress"></div> -->
-  <script src="02_dplyr-examples_files/rmdshower/node_modules/shower/node_modules/shower-core/shower.min.js"></script>
-  <!-- Copyright © 2015 Yours Truly, Famous Inc. -->
-  <!-- Photos by John Carey, fiftyfootshadows.net -->
+---
 
-    <script>renderMathInElement(document.body);</script>
-  
-  
-</body>
+# Helper functions (2)
+
+- `count()` is a further shortcut of `group_by` and `tally`:
+
+
+```r
+happy %&gt;% count(sex, degree)
+```
+
+```
+##       sex         degree     n
+## 1    male lt high school  6021
+## 2    male    high school 14828
+## 3    male junior college  1637
+## 4    male       bachelor  4951
+## 5    male       graduate  2828
+## 6    male           &lt;NA&gt;    85
+## 7  female lt high school  7766
+## 8  female    high school 19942
+## 9  female junior college  2400
+## 10 female       bachelor  5551
+## 11 female       graduate  2641
+## 12 female           &lt;NA&gt;   104
+## 13   &lt;NA&gt; lt high school    46
+## 14   &lt;NA&gt;    high school    22
+## 15   &lt;NA&gt; junior college     1
+## 16   &lt;NA&gt;       bachelor     9
+## 17   &lt;NA&gt;       graduate     7
+## 18   &lt;NA&gt;           &lt;NA&gt;     7
+```
+
+- `count()` doesn't introduce any grouping
+
+
+---
+
+# Grouping and Ungrouping
+
+- `ungroup` removes a grouping structure from a data set
+
+- necessary to make changes to a grouping variable (such as re-ordering or re-labelling) 
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
 </html>
