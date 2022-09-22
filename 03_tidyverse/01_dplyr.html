@@ -204,19 +204,19 @@ Introduce a variable `Rate` into the `fbi` data:
 
 
 ```r
-fbi %&gt;% mutate(rate = count/population*70000) %&gt;% head()
+fbi %&gt;% mutate(rate = count/population*90000) %&gt;% head()
 ```
 
 ```
 ## # A tibble: 6 × 9
 ##   state   state_id state_abbr  year population type         count viole…¹   rate
 ##   &lt;chr&gt;      &lt;int&gt; &lt;chr&gt;      &lt;int&gt;      &lt;int&gt; &lt;chr&gt;        &lt;int&gt; &lt;lgl&gt;    &lt;dbl&gt;
-## 1 Alabama        2 AL          1983    3959000 homicide       364 TRUE      6.44
-## 2 Alabama        2 AL          1983    3959000 rape_legacy    931 TRUE     16.5 
+## 1 Alabama        2 AL          1983    3959000 homicide       364 TRUE      8.27
+## 2 Alabama        2 AL          1983    3959000 rape_legacy    931 TRUE     21.2 
 ## 3 Alabama        2 AL          1983    3959000 rape_revised    NA TRUE     NA   
-## 4 Alabama        2 AL          1983    3959000 robbery       3895 TRUE     68.9 
-## 5 Alabama        2 AL          1983    3959000 aggravated_… 11281 TRUE    199.  
-## 6 Alabama        2 AL          1983    3959000 burglary     42485 FALSE   751.  
+## 4 Alabama        2 AL          1983    3959000 robbery       3895 TRUE     88.5 
+## 5 Alabama        2 AL          1983    3959000 aggravated_… 11281 TRUE    256.  
+## 6 Alabama        2 AL          1983    3959000 burglary     42485 FALSE   966.  
 ## # … with abbreviated variable name ¹​violent_crime
 ```
 
@@ -334,15 +334,15 @@ Calculate the mean and standard deviation of Crime rates in the `fbi` data
 
 ```r
 fbi %&gt;% 
-    summarise(mean_rate = mean(count/population*70000, na.rm=TRUE), 
-              sd_rate = sd(count/population*70000, na.rm = TRUE))
+    summarise(mean_rate = mean(count/population*90000, na.rm=TRUE), 
+              sd_rate = sd(count/population*90000, na.rm = TRUE))
 ```
 
 ```
 ## # A tibble: 1 × 2
 ##   mean_rate sd_rate
 ##       &lt;dbl&gt;   &lt;dbl&gt;
-## 1      363.    605.
+## 1      467.    777.
 ```
 
 ---
@@ -376,23 +376,23 @@ For each type of crime, calculate average crime rate and standard deviation.
 ```r
 fbi %&gt;%
     group_by(type) %&gt;%
-    summarise(mean_rate = mean(count/population*70000, na.rm=TRUE), 
-              sd_rate = sd(count/population*70000, na.rm = TRUE))
+    summarise(mean_rate = mean(count/population*90000, na.rm=TRUE), 
+              sd_rate = sd(count/population*90000, na.rm = TRUE))
 ```
 
 ```
 ## # A tibble: 9 × 3
 ##   type                mean_rate sd_rate
 ##   &lt;chr&gt;                   &lt;dbl&gt;   &lt;dbl&gt;
-## 1 aggravated_assault     197.    113.  
-## 2 arson                   18.7    11.8 
-## 3 burglary               599.    302.  
-## 4 homicide                 4.57    4.54
-## 5 larceny               1755.    582.  
-## 6 motor_vehicle_theft    247.    159.  
-## 7 rape_legacy             24.0     9.58
-## 8 rape_revised            31.2    13.7 
-## 9 robbery                 92.8    98.0
+## 1 aggravated_assault     253.    146.  
+## 2 arson                   24.1    15.2 
+## 3 burglary               770.    389.  
+## 4 homicide                 5.87    5.83
+## 5 larceny               2257.    749.  
+## 6 motor_vehicle_theft    317.    204.  
+## 7 rape_legacy             30.9    12.3 
+## 8 rape_revised            40.1    17.6 
+## 9 robbery                119.    126.
 ```
 
 ---

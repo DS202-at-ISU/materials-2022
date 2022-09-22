@@ -182,7 +182,7 @@ variables introduced become available in following changes
 Introduce a variable `Rate` into the `fbi` data:
 
 ```{r}
-fbi %>% mutate(rate = count/population*70000) %>% head()
+fbi %>% mutate(rate = count/population*90000) %>% head()
 ```
 
 
@@ -271,8 +271,8 @@ Calculate the mean and standard deviation of Crime rates in the `fbi` data
 
 ```{r}
 fbi %>% 
-    summarise(mean_rate = mean(count/population*70000, na.rm=TRUE), 
-              sd_rate = sd(count/population*70000, na.rm = TRUE))
+    summarise(mean_rate = mean(count/population*90000, na.rm=TRUE), 
+              sd_rate = sd(count/population*90000, na.rm = TRUE))
 ```
 
 ---
@@ -305,8 +305,8 @@ For each type of crime, calculate average crime rate and standard deviation.
 ```{r}
 fbi %>%
     group_by(type) %>%
-    summarise(mean_rate = mean(count/population*70000, na.rm=TRUE), 
-              sd_rate = sd(count/population*70000, na.rm = TRUE))
+    summarise(mean_rate = mean(count/population*90000, na.rm=TRUE), 
+              sd_rate = sd(count/population*90000, na.rm = TRUE))
 ```
 
 ---
