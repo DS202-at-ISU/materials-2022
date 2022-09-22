@@ -15,9 +15,6 @@ output:
 ```{r echo=FALSE, message=FALSE}
 library(tidyverse)
 ```
----
-class: inverse, center, middle
-# Logical variables, filters, and updating data
 
 ---
 
