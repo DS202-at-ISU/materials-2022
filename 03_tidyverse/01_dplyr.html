@@ -76,19 +76,25 @@ There are a couple of primary `dplyr` *verbs*, representing distinct data analys
 
 # Common structure
 
-all functions of the tidyverse have `data` as their first element
-
-Important: do not use `$` notation for variables within these functions, e.g: 
+1. all functions of the tidyverse have `data` as their first element
 
 ```
 ggplot(data = fbi, aes(x = year, y = count)) + 
   geom_point()
+
+filter(data = fbi, year &gt;= 2017, state == "Iowa")
 ```
 
+*i.e. work well with `%&gt;%` operator*
 
-```
-filter(fbi, year &gt;= 2017, state == "Iowa")
-```
+2. *Most* functions return a data set. 
+
+**The dimension of that data set is crucial, pay attention to it!**
+
+
+&lt;br&gt;
+&lt;br&gt;
+Important: do not use `$` notation for variables within these functions, e.g: 
 
 
 ---
