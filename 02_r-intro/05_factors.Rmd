@@ -39,8 +39,9 @@ class: inverse
 
 - Are there other variables that should be factors (or vice versa)? 
 
-```{r, echo=TRUE}
+```{r, echo=TRUE, message = FALSE, warning = FALSE}
 library(classdata)
+library(tidyverse)
 fbi$type <- factor(fbi$type)
 ```
 
@@ -115,16 +116,22 @@ To get the labels of a factor as numbers, first cast to character and then to a 
 
 ---
 
-# Reordering factor levels - manual
+# Checking Factor levels 
 
-```{r}
+order of levels is  preserved in charts: 
+
+```{r, fig.height = 3, fig.width = 10, warning=FALSE}
+fbi %>% ggplot(aes(x = type, y = log10(count))) + geom_boxplot()
 levels(fbi$type)
 ```
+---
 
-manually (extremely sensitive to typos):
+# Reordering factor levels - manual
+manual re-ordering (extremely sensitive to typos):
 
-```{r}
-levels(factor(fbi$type, levels=c("larceny", "burglary", "motor_vehicle_theft", "arson", "aggravated_assault", "robbery", "rape_legacy", "rape_revised", "homicide")))
+```{r, fig.height = 3, warning=FALSE, fig.width = 10}
+fbi$type <- factor(fbi$type, levels=c("larceny", "burglary", "motor_vehicle_theft", "arson", "aggravated_assault", "robbery", "rape_legacy", "rape_revised", "homicide"))
+fbi %>% ggplot(aes(x = type, y = log10(count))) + geom_boxplot()
 ```
 
 ---
@@ -135,39 +142,27 @@ levels(factor(fbi$type, levels=c("larceny", "burglary", "motor_vehicle_theft", "
 
 reorder levels in factor by values in `numbers`. Use `function` to summarise (average is used by default). 
 
-```{r}
-levels(reorder(fbi$type, fbi$count, na.rm=TRUE))
+```{r, fig.height = 3, warning=FALSE, fig.width = 10}
+fbi$type <- reorder(fbi$type, fbi$count, na.rm=TRUE)
+fbi %>% ggplot(aes(x = type, y = log10(count))) + geom_boxplot()
 ```
 
 missing values in `numbers`? make sure to use parameter `na.rm=TRUE`!
-
----
-class:inverse
-## Your Turn
-
-This your turn is about re-ordering factor variables.
-We are using the `tips` dataset from the package `reshape2` (you might have to install that package using the command `install.packages("reshape2")`)
-
-- Plot side-by-side boxplots of `tip` by `day`. Are there differences in the amount of tips? 
-- Get the levels of `tip` in an order of Thursday, Friday, Saturday, Sunday and plot again.
-- Is amount of `tip` the best variable to check for differences? What other variable might affect the size of a tip?
-
 
 ---
 class: inverse
 ## Your turn 
 
 
-For this your turn use the `fbi` object from the `classdata` package. 
+For this your turn use the `fbiwide` object from the `classdata` package. 
 
-- Introduce a rate of the number of reported offenses by population into the `fbi` data. You could use the *Ames standard* to make values comparable to a city of the size of Ames and Story county (population ~90,000).
+- Plot a boxplot of the number of motor vehicle thefts by year. (you might have to convert year to a factor variable!)
 
-- Plot boxplots of crime rates by different types of crime. How can you make axis text legible? 
+- Plot a boxplot of the rate (adjust to some interpretable rate - e.g. Ames standard) of motor vehicle thefts by state (abbreviations). Add coord_flip()  in case the state names run into one another. 
 
-- Reorder the boxplots of crime rates, such that the boxplots are ordered by their medians. 
+- Reorder the boxplots of rates of motor vehicle thefts, such that the boxplots are ordered by their medians. 
 
-- For one type of crime (subset!) plot boxplots of rates by state, reorder boxplots by median crime rates
-
+- Plot (reordered) boxplots by state for another type of crime. 
 
 ---
 

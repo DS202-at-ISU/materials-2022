@@ -49,6 +49,7 @@ class: inverse
 
 ```r
 library(classdata)
+library(tidyverse)
 fbi$type &lt;- factor(fbi$type)
 ```
 
@@ -127,8 +128,16 @@ To get the labels of a factor as numbers, first cast to character and then to a 
 
 ---
 
-# Reordering factor levels - manual
+# Checking Factor levels 
 
+order of levels is  preserved in charts: 
+
+
+```r
+fbi %&gt;% ggplot(aes(x = type, y = log10(count))) + geom_boxplot()
+```
+
+![](05_factors_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
 
 ```r
 levels(fbi$type)
@@ -139,19 +148,18 @@ levels(fbi$type)
 ## [4] "homicide"            "larceny"             "motor_vehicle_theft"
 ## [7] "rape_legacy"         "rape_revised"        "robbery"
 ```
+---
 
-manually (extremely sensitive to typos):
+# Reordering factor levels - manual
+manual re-ordering (extremely sensitive to typos):
 
 
 ```r
-levels(factor(fbi$type, levels=c("larceny", "burglary", "motor_vehicle_theft", "arson", "aggravated_assault", "robbery", "rape_legacy", "rape_revised", "homicide")))
+fbi$type &lt;- factor(fbi$type, levels=c("larceny", "burglary", "motor_vehicle_theft", "arson", "aggravated_assault", "robbery", "rape_legacy", "rape_revised", "homicide"))
+fbi %&gt;% ggplot(aes(x = type, y = log10(count))) + geom_boxplot()
 ```
 
-```
-## [1] "larceny"             "burglary"            "motor_vehicle_theft"
-## [4] "arson"               "aggravated_assault"  "robbery"            
-## [7] "rape_legacy"         "rape_revised"        "homicide"
-```
+![](05_factors_files/figure-html/unnamed-chunk-7-1.png)&lt;!-- --&gt;
 
 ---
 
@@ -163,16 +171,20 @@ reorder levels in factor by values in `numbers`. Use `function` to summarise (av
 
 
 ```r
-levels(reorder(fbi$type, fbi$count, na.rm=TRUE))
+fbi$type &lt;- reorder(fbi$type, fbi$count, na.rm=TRUE)
+fbi %&gt;% ggplot(aes(x = type, y = log10(count))) + geom_boxplot()
 ```
 
-```
-## [1] "homicide"            "arson"               "rape_legacy"        
-## [4] "rape_revised"        "robbery"             "aggravated_assault" 
-## [7] "motor_vehicle_theft" "burglary"            "larceny"
-```
+![](05_factors_files/figure-html/unnamed-chunk-8-1.png)&lt;!-- --&gt;
 
 missing values in `numbers`? make sure to use parameter `na.rm=TRUE`!
+
+
+---
+class:inverse
+## Your Turn
+
+Use the 
 
 ---
 class:inverse
@@ -191,16 +203,15 @@ class: inverse
 ## Your turn 
 
 
-For this your turn use the `fbi` object from the `classdata` package. 
+For this your turn use the `fbiwide` object from the `classdata` package. 
 
-- Introduce a rate of the number of reported offenses by population into the `fbi` data. You could use the *Ames standard* to make values comparable to a city of the size of Ames and Story county (population ~90,000).
+- Plot a boxplot of the number of motor vehicle thefts by year. (you might have to convert year to a factor variable!)
 
-- Plot boxplots of crime rates by different types of crime. How can you make axis text legible? 
+- Plot a boxplot of the rate (adjust to some interpretable rate - e.g. Ames standard) of motor vehicle thefts by state (abbreviations). Add coord_flip()  in case the state names run into one another. 
 
-- Reorder the boxplots of crime rates, such that the boxplots are ordered by their medians. 
+- Reorder the boxplots of rates of motor vehicle thefts, such that the boxplots are ordered by their medians. 
 
-- For one type of crime (subset!) plot boxplots of rates by state, reorder boxplots by median crime rates
-
+- Plot (reordered) boxplots by state for another type of crime. 
 
 ---
 
@@ -212,9 +223,9 @@ levels(fbi$type)
 ```
 
 ```
-## [1] "aggravated_assault"  "arson"               "burglary"           
-## [4] "homicide"            "larceny"             "motor_vehicle_theft"
-## [7] "rape_legacy"         "rape_revised"        "robbery"
+## [1] "homicide"            "arson"               "rape_legacy"        
+## [4] "rape_revised"        "robbery"             "aggravated_assault" 
+## [7] "motor_vehicle_theft" "burglary"            "larceny"
 ```
 
 
@@ -225,9 +236,9 @@ levels(fbi$type)
 ```
 
 ```
-## [1] "aggravated_assault" "arson"              "burglary"          
-## [4] "homicide"           "larceny"            "car_theft"         
-## [7] "rape_legacy"        "rape_revised"       "robbery"
+## [1] "homicide"            "arson"               "rape_legacy"        
+## [4] "rape_revised"        "robbery"             "car_theft"          
+## [7] "motor_vehicle_theft" "burglary"            "larceny"
 ```
 
 ---
