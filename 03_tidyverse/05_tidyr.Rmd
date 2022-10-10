@@ -13,7 +13,8 @@ class: middle, inverse, center
 # The `tidyr` package
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, 
+                      warning = FALSE, message = FALSE)
 library(tidyverse)
 data(french_fries, package="reshape2")
 ```
@@ -173,17 +174,19 @@ ffm
 
 ---
 
-# Spread/Pivot to wide
+# Pivot to wide
 
 ```{r}
 ffm %>% pivot_wider(names_from = rep, values_from = score)
-ffm %>% spread(key = rep, value = score)
+#ffm %>% spread(key = rep, value = score)
 ```
 
 ---
 
 ```{r}
-ffm %>% spread(key = rep, value = score) %>%
+ffm %>% 
+  pivot_wider(
+    names_from = rep, values_from = score) %>%
   ggplot(aes(x = `1`, y = `2`)) + geom_point() +
   facet_wrap(~scale) + geom_abline(colour = "grey50")
 ```
@@ -194,9 +197,9 @@ class: inverse
 
 For this your turn use the `french_fries` data from the `reshape2` package: `data("french_fries", package="reshape2")` 
 
-- Use `gather` or `pivot_longer` from the `tidyr` package to combine the different scales for assessing french fries into a single variable. Call the key-value pair "scale" and "score". 
+- Use `pivot_longer` from the `tidyr` package to combine the different scales for assessing french fries into a single variable. Call the key-value pair "scale" and "score". 
 
-- Use `spread` or `pivot_wider` from the `tidyr` package to get a format in which you can directly compare values from week 1 to week 10. Plot a scatterplot of values in week 1 against week 10. Facet by treatment and scale, color by individuals   and use different shapes for the replicates. Is there a pattern visible?
+- Use `pivot_wider` from the `tidyr` package to get a format in which you can directly compare values from week 1 to week 10. Plot a scatterplot of values in week 1 against week 10. Facet by treatment and scale, color by individuals   and use different shapes for the replicates. Is there a pattern visible?
 
 ---
 class: inverse
@@ -204,15 +207,14 @@ class: inverse
 
 For this your turn use the `fbiwide` data from the `classdata` package: `data("fbiwide", package="classdata")` 
 
-- Use `gather` or `pivot_longer` from the `tidyr` package to combine the variables for the different types of crimes into one variable. Call the key-value pair "Type" and "Incidences". Compute a crime rate
+- Use  `pivot_longer` from the `tidyr` package to combine the variables for the different types of crimes into one variable. Call the key-value pair "Type" and "Incidences". Compute a crime rate
 
-- Only consider crime rates for Iowa and Minnesota. Use `spread` or `pivot_wider` to create incidence columns for each of these states. Plot crimes in Iowa against crimes in Minnesota, colour by type of crime. Note: you need to exclude some variables. 
+- Only consider crime rates for Iowa and Minnesota. Use  `pivot_wider` to create incidence columns for each of these states. Plot crimes in Iowa against crimes in Minnesota, colour by type of crime. Note: you need to exclude some variables. 
 
 ---
 
-# Spread works as inverse of gather
+# `pivot_wider` works as inverse of `pivot_longer` ...
 
-`pivot_wider` works as inverse of `pivot_longer` ...
 ![](images/spread-gather-clean.png)
 
 ---
@@ -223,13 +225,13 @@ For this your turn use the `fbiwide` data from the `classdata` package: `data("f
 
 ---
 
-# Where using `spread` or `pivot_wider` is tricky
+# Where using `pivot_wider` is tricky
 
-- `spread`/`pivot_wider` is the (almost) inverse operation of `gather`/`pivot_longer`
+- `pivot_wider` is the (almost) inverse operation of `pivot_longer`
 
-- when we use `gather`/`pivot_longer` the key information is duplicated
+- when we use `pivot_longer` the key information is duplicated
 
-- when using `spread`/`pivot_wider` we need to make sure that the information outside the key and value is identical for all levels (and combinations of levels) of the `key` variable.
+- when using `pivot_wider` we need to make sure that the information outside the key and value is identical for all levels (and combinations of levels) of the `key` variable.
 
 - If the info is not identical across levels, missing values are introduced into the new data set.
 
@@ -246,9 +248,8 @@ fbi %>% filter(year==2014, state_abbr %in% c("IA", "MN"),
 Other state specific values don't allow spread to collapse the front part and introduce missing values:
 
 ```{r}
-fbi %>% filter(year==2014, state %in% c("Iowa", "Minnesota"),
-               type=="burglary") %>% 
-  spread(state, count)
+fbi %>% filter(year==2014, state %in% c("Iowa", "Minnesota"),  type=="burglary") %>% 
+  pivot_wider(names_from=state, values_from=count)
 ```
 
 ---
