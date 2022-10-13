@@ -44,3 +44,4 @@ ffm <- french_fries %>%
 ffm
 ```
 
+Absolutely essential: [Rstudio cheat sheet for tidyr](https://raw.githubusercontent.com/rstudio/cheatsheets/main/tidyr.pdf)
