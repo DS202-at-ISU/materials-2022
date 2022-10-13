@@ -1,0 +1,46 @@
+---
+title: "DS 202: wide to long form"
+author: "Heike Hofmann"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+# French fries data
+
+```{r warning = FALSE, message = FALSE}
+library(tidyverse)
+data(french_fries, package="reshape2")
+```
+
+- data from sensory experiment conducted at Iowa State University in 2004
+
+- investigators were interested in comparing effects of three different fryer oils on taste of fries
+
+```{r}
+french_fries %>% head()
+```
+
+---
+
+# Pivot to long
+
+<img src="images/gather-spread.png" width="500px">
+
+---
+
+
+# Gather/Pivot to long
+
+```{r}
+ffm <- french_fries %>% 
+  pivot_longer(cols = potato:painty, 
+               names_to = "scale", 
+               values_to = "score")
+ffm
+```
+
