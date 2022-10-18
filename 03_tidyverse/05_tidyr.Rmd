@@ -170,10 +170,24 @@ ffm
 
 # Gather/Pivot to long
 
-![](images/gather-spread.png)
+<img src="images/gather-spread.png" height = 400>
 
 ---
+class: inverse
+# Your Turn
 
+Load the Avengers' data from FiveThirtyEight's survey into your work session:
+```{r}
+av <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/avengers/avengers.csv", stringsAsFactors = FALSE)
+```
+
+- Use the `select` function and the selector `starts_with` (read up on `?starts_with`) to select the name of the Avenger and all five death variables. Inspect the result with `head`.
+
+- Create a long form of the five return variables in the `av` data set using the function `pivot_longer`. Call the names `Time` and the values `Died`. Select `URL`, `Name.Alias`, `Time`, and `Died`, and save the result as `deaths`. Inspect the data set.
+
+- Create a (temporary) frequency breakdown of the variable `Died`. How can we interpret these numbers?
+
+---
 # Pivot to wide
 
 ```{r}

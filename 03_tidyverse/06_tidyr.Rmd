@@ -1,61 +1,137 @@
 ---
-title: "DS 202: dplyr functions"
-author: Heike Hofmann
-ratio: 16x10
+title: "Reshaping data with tidyr - working with separate and unite"
+author: "Heike Hofmann"
 output:
-  rmdshower::shower_presentation:
-    self_contained: false
-    katex: true
-    theme: ribbon
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
 ---
+# Outline
 
-# Messy (2)
+- cleaning data (first run)
 
-## separate
+- functions `separate` and `unite`
 
-```{r, message=FALSE, warning=FALSE}
+
+---
+# parse_number 
+
+the tidyverse package `readr` contains function `parse_number`
+
+```{r}
+library(readr)
+x <- c("3.14", "5.2%", "$10", "5,321.00")
+x
+parse_number(x)
+```
+---
+class: inverse
+# Your Turn
+
+Work on the previously created data frame `returns`.
+
+```{r echo=FALSE, include=FALSE}
 library(tidyverse)
-df <- data.frame(x = c("a.b", "a.d", "b.c", NA))
+av <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/avengers/avengers.csv", stringsAsFactors = FALSE)
+deaths <- av %>% 
+  pivot_longer(starts_with("Death"), 
+               names_to="Time", values_to = "Died") %>%
+  select(URL, Name.Alias, Time, Died) %>%
+  filter(Died %in% c("YES", "NO"))
+```
+
+- Use `parse_number` to extract from the variable `Time` a number. Inspect the result.
+
+- Group by Avenger (use URL) and `Died`. Find the maximum of `Time`. 
+Interpret the resulting data set.
+
+```{r, echo=FALSE}
+deaths %>% 
+  mutate(Time = parse_number(Time)) %>%
+  group_by(URL, Died) %>% 
+  summarize(max = max(Time)) %>%
+  head(10)
+```
+
+---
+# separate
+
+Messy (2): Multiple variables are stored in one column
+
+```{r, message=FALSE, warning = FALSE}
+library(tidyverse)
+df <- data.frame(x = c(NA, "a.b", "a.d", "b.c"))
 df
 df %>% separate(x, into = c("A", "B"))
 ```
 
-## Your Turn (5 min)
+---
+class: inverse
+# Your Turn (5 min)
 
 
 The Iowa Data Portal is a wealth of information on and about the State of Iowa. 
 
 The website 
-[Campaign Expenditures](https://data.iowa.gov/Government/Campaign-Expenditures/3adi-mht4/data) provides data on campaign expenditures. The code below reads the data into an R session.
-
+[Liquor Sales](https://data.iowa.gov/Sales-Distribution/Iowa-Liquor-Sales/m3tr-qhgy) provides data on every liquor sale in a licensed store in Iowa. The code below reads (part of) the data into an R session.
 
 ```
-url <- "https://data.iowa.gov/api/views/3adi-mht4/rows.csv"
-campaign <- readr::read_csv(url)
+url <- "https://github.com/Stat579-at-ISU/materials/blob/master/03_tidyverse/data/Iowa_Liquor_Sales.csv.zip?raw=TRUE"
+download.file(url, "iowa.zip", mode="wb")
+iowa <- readr::read_csv("iowa.zip")
 ```
 
 Assess the 'messiness' of the data. List issues that prevent us from working with the data directly. Which of these issues are of type (1) or (2) of messiness?
 
-## Problems with the data
+---
+class: inverse
+# Your Turn - Fast Fingers
+
+Run the following code to load the Iowa Liquor Sales into your working session
+
+```
+url <- "https://github.com/Stat579-at-ISU/materials/blob/master/03_tidyverse/data/Iowa_Liquor_Sales.csv.zip?raw=TRUE"
+download.file(url, "iowa.zip", mode="wb")
+iowa <- readr::read_csv("iowa.zip")
+```
+Open the Fast Fingers Quiz in Canvas for a chance to earn 5 points of extra credit. Good luck!
+
+---
+
+# Problems with the data
 
 - `Date` is text, in the format of Month/Day/Year (Messy 2)
-- city coordinates are a combination of City name, state, zip code and geographic latitude and longitude. (Messy 2)
-- expenditure amount is a textual expression, not a number (Messy different)
+
+- Store location is a textual expression of form `POINT (`...`)` and geographic latitude and longitude. (Messy 2)
+
 
 no Messy 1? - problems of type Messy 1 are typically hard to detect and often up to interpretation/dependent on the analysis to be done.
 
+---
+class: inverse
+# Your Turn (10 min)
 
-## Your Turn (10 min)
 
-<img src="images/beardshear-view.png" width=1100 class="cover">
+- Check the help for the function `parse_number` in the `readr` package and use it on the store location. What result do you get?
 
-- Check the help for the function `parse_number` in the `readr` package and use it on the campaign expenditure data.
 - Use `separate` to split the date variable into year, month and day.
-- Use `separate` again to extract geographic latitude and longitude (Hint - you might need several steps of `separate`)
-- Using `dplyr` functionality answer the following questions:
 
-  1. What is the total amount of campaign expenditure?
-  2. What is the single largest cost in the campaign expenditures?
-  3. What time frame does the campaign expenditure cover?
-  4. Plot geographic longitude and latitude. Do campaign expenditures stay in the State of IA? Investigate oddities.
+- Use `separate` again to extract geographic latitude and longitude (Hint - you might need several steps of `separate`)
+
+---
+class: inverse
+# Your Turn - exploration (10 mins)
+
+Use `dplyr` functionality to answer the following questions:
+
+  1. What is the total amount spent on Liquor Sales?
+
+  2. What is the single largest sale (in volume/in dollar amount)?
+<!--  3. What time frame does the campaign expenditure cover?-->
+
+  4. Plot geographic longitude and latitude. Where are liquor sales in Ames happening? 
+
 
