@@ -33,7 +33,7 @@ class: inverse
 
 Work on the previously created data frame `returns`.
 
-```{r echo=FALSE, include=FALSE}
+```{r echo=FALSE, include=FALSE, message = FALSE}
 library(tidyverse)
 av <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/avengers/avengers.csv", stringsAsFactors = FALSE)
 deaths <- av %>% 
@@ -45,16 +45,30 @@ deaths <- av %>%
 
 - Use `parse_number` to extract from the variable `Time` a number. Inspect the result.
 
-- Group by Avenger (use URL) and `Died`. Find the maximum of `Time`. 
-Interpret the resulting data set.
+- Group by Avenger (use URL) and `Died`. Find the maximum of `Time`. Call the result `maxdeaths`. Interpret the resulting data set.
 
 ```{r, echo=FALSE}
 deaths %>% 
   mutate(Time = parse_number(Time)) %>%
   group_by(URL, Died) %>% 
-  summarize(max = max(Time)) %>%
+  summarize(Time = max(Time)) %>% 
   head(10)
 ```
+---
+class: inverse
+# Your Turn
+
+Work with the `maxdeaths` dataset. Find the frequency break down by Time and Died (`group_by`, `tally`).
+
+```{r echo=FALSE, message=FALSE}
+deaths %>% 
+  mutate(Time = parse_number(Time)) %>%
+  group_by(URL, Died) %>% 
+  summarize(Time = max(Time)) %>% 
+  group_by(Died, Time) %>%
+  tally()
+```
+Use the same steps for all of the Avengers' returns and you have the basic info for all statements for lab #3.
 
 ---
 # separate
