@@ -145,25 +145,11 @@ The website
 [Liquor Sales](https://data.iowa.gov/Sales-Distribution/Iowa-Liquor-Sales/m3tr-qhgy) provides data on every liquor sale in a licensed store in Iowa. The code below reads (part of) the data into an R session.
 
 ```
-url &lt;- "https://github.com/Stat579-at-ISU/materials/blob/master/03_tidyverse/data/Iowa_Liquor_Sales.csv.zip?raw=TRUE"
-download.file(url, "iowa.zip", mode="wb")
-iowa &lt;- readr::read_csv("iowa.zip")
+url &lt;- "https://github.com/ds202-at-ISU/materials/blob/master/03_tidyverse/data/ames-liquor.rds?raw=TRUE"
+download.file(url, "ames-liquor.rds", mode="wb")
+ames &lt;- readRDS("ames-liquor.rds")
 ```
 
-Assess the 'messiness' of the data. List issues that prevent us from working with the data directly. Which of these issues are of type (1) or (2) of messiness?
-
----
-class: inverse
-# Your Turn - Fast Fingers
-
-Run the following code to load the Iowa Liquor Sales into your working session
-
-```
-url &lt;- "https://github.com/Stat579-at-ISU/materials/blob/master/03_tidyverse/data/Iowa_Liquor_Sales.csv.zip?raw=TRUE"
-download.file(url, "iowa.zip", mode="wb")
-iowa &lt;- readr::read_csv("iowa.zip")
-```
-Open the Fast Fingers Quiz in Canvas for a chance to earn 5 points of extra credit. Good luck!
 
 ---
 
@@ -183,9 +169,8 @@ class: inverse
 
 - Check the help for the function `parse_number` in the `readr` package and use it on the store location. What result do you get?
 
-- Use `separate` to split the date variable into year, month and day.
-
-- Use `separate` again to extract geographic latitude and longitude (Hint - you might need several steps of `separate`)
+- Use `separate` to split the variable for store location into longitude and latitude.
+ (Hint - you might need several steps of `separate`)
 
 ---
 class: inverse
@@ -196,7 +181,6 @@ Use `dplyr` functionality to answer the following questions:
   1. What is the total amount spent on Liquor Sales?
 
   2. What is the single largest sale (in volume/in dollar amount)?
-&lt;!--  3. What time frame does the campaign expenditure cover?--&gt;
 
   4. Plot geographic longitude and latitude. Where are liquor sales in Ames happening? 
 
