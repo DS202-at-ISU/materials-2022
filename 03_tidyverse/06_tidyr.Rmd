@@ -120,6 +120,8 @@ class: inverse
 - Use `separate` to split the variable for store location into longitude and latitude.
  (Hint - you might need several steps of `separate`)
 
+- Make sure that latitude and longitude are numeric variables. 
+
 ---
 class: inverse
 # Your Turn - exploration (10 mins)
