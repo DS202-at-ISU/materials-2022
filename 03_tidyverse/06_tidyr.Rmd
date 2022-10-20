@@ -93,7 +93,7 @@ The website
 [Liquor Sales](https://data.iowa.gov/Sales-Distribution/Iowa-Liquor-Sales/m3tr-qhgy) provides data on every liquor sale in a licensed store in Iowa. The code below reads (part of) the data into an R session.
 
 ```
-url <- "https://github.com/Stat579-at-ISU/materials/blob/master/03_tidyverse/data/Iowa_Liquor_Sales.csv.zip?raw=TRUE"
+url <- "https://github.com/ds202-at-ISU/materials/blob/master/03_tidyverse/data/Iowa_Liquor_Sales.csv.zip?raw=TRUE"
 download.file(url, "iowa.zip", mode="wb")
 iowa <- readr::read_csv("iowa.zip")
 ```
