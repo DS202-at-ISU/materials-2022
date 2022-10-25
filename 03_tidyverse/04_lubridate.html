@@ -59,6 +59,14 @@ mdy("10-17-2022")
 ```
 
 ---
+
+# Conversion functions
+
+[lubridate package cheat sheet](https://github.com/rstudio/cheatsheets/raw/main/lubridate.pdf)
+
+![](images/lubridate-conversion.png)
+
+---
 class: inverse
 # Your Turn 
 
@@ -93,6 +101,7 @@ summary(ames$Date) # allows time algebra
 ```
 
 
+
 ---
 
 # Accessor functions
@@ -118,7 +127,7 @@ wday(now(), label = TRUE)
 ```
 
 ```
-## [1] Thu
+## [1] Mon
 ## Levels: Sun &lt; Mon &lt; Tue &lt; Wed &lt; Thu &lt; Fri &lt; Sat
 ```
 
@@ -139,7 +148,7 @@ span
 ```
 
 ```
-## [1] "2021-10-20 00:15:39 CDT"
+## [1] "2021-10-24 21:24:11 CDT"
 ```
 
 ```r
@@ -147,7 +156,7 @@ end_date - days(10)
 ```
 
 ```
-## [1] "2022-10-10 00:15:39 CDT"
+## [1] "2022-10-14 21:24:11 CDT"
 ```
 
 
@@ -203,8 +212,7 @@ class: inverse
 
 - Why are there no 0s in the data? Does that change your assessment of the average number of sales per day?
 
-- Challenge: use the functions `seq.Date` and `complete`  to introduce days into the dataset with no sales. Sta
-rt by reading the help files ... 
+- Challenge: use the functions `seq.Date` and `complete`  to introduce days into the dataset with no sales. Start by reading the help files for the functions ... 
 
 &lt;!--
 
@@ -213,9 +221,9 @@ ames %&gt;%
   mutate(
     Date = mdy(Date)
   ) %&gt;%
-  complete(Date = seq(from=ymd("2012-01-03"), to =ymd("2022-09-30"), by="day")) %&gt;%
+  complete(Date = seq(from=ymd("2012-01-01"), to =ymd("2022-09-30"), by="day")) %&gt;% #head()
     group_by(Date) %&gt;%
-    summarize(n = n()-1) %&gt;% summary()
+    summarize(n = sum(!is.na(City))) %&gt;% summary()
 ```
 
 ```
@@ -224,15 +232,16 @@ ames %&gt;%
 
 ```
 ##       Date                  n           
-##  Min.   :2012-01-03   Min.   :     0.0  
-##  1st Qu.:2014-09-09   1st Qu.:     0.0  
-##  Median :2017-05-17   Median :     0.0  
-##  Mean   :2017-05-17   Mean   :   168.6  
-##  3rd Qu.:2020-01-23   3rd Qu.:     0.0  
-##  Max.   :2022-09-30   Max.   :661944.0  
+##  Min.   :2012-01-01   Min.   :     0.0  
+##  1st Qu.:2014-09-08   1st Qu.:     0.0  
+##  Median :2017-05-16   Median :     0.0  
+##  Mean   :2017-05-16   Mean   :   168.6  
+##  3rd Qu.:2020-01-22   3rd Qu.:     0.0  
+##  Max.   :2022-09-30   Max.   :661945.0  
 ##  NA's   :1
 ```
 --&gt;
+
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
