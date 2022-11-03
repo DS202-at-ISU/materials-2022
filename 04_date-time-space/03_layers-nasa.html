@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Layers of plots</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Heike Hofmann" />
+    <script src="03_layers-nasa_files/header-attrs-2.17/header-attrs.js"></script>
+    <link href="03_layers-nasa_files/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="03_layers-nasa_files/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Layers of plots
+### Heike Hofmann
+
+---
+
+class: middle, inverse, center
+# Layers in `ggplot2`
+
+
+
+---
+
+# Outline
+
+- grammar of graphics, again
+
+- layer specifications
+
+
+---
+
+# Grammar of Graphics
+
+A graphical representation (plot) consists of:
+
+1. **mappings** (`aes`):  data variables are mapped to graphical elements
+
+2. **layers**:  geometric elements (`geoms`, such as points, lines, rectangles, text, ...) and statistical transformations (`stats`, are identity, counts, bins, ...)
+
+3. **scales**: map values in the data space to values in an aesthetic space (e.g. color, size, shape, but also position)
+
+4. **coordinate system** (`coord`): normally Cartesian, but pie charts use e.g. polar coordinates
+
+5. **facetting**: for small multiples (subsets) and their arrangement
+
+6. **theme**: fine-tune display items, such as font and its size, color of background, margins, ...
+
+
+
+---
+
+# Layers
+
+each layer has several parts, the two most important are:
+
+- mapping: using the `aes()` function, we specify mappings between variables and aesthetics of the chart
+
+- `data`: the dataset used in the layer 
+
+`ggplot` is the layer that sets the defaults, &lt;br&gt;
+
+`geom_XXX` creates a layer: for each aspect it either uses the default or has to specify its own
+
+---
+
+# Previous example
+
+
+```r
+data(nasa, package="GGally")
+nasa %&gt;% filter(id=="1-1") %&gt;%
+  ggplot(aes(x = date, y= temperature)) + geom_point()
+```
+
+![](03_layers-nasa_files/figure-html/unnamed-chunk-1-1.png)&lt;!-- --&gt;
+
+---
+
+# Connecting the points
+
+
+```r
+nasa %&gt;% filter(id=="1-1") %&gt;%
+  ggplot(aes(x = date, y= temperature)) + geom_point() +
+  geom_line()
+```
+
+![](03_layers-nasa_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
+
+---
+
+# Adding a trend line
+
+
+```r
+nasa %&gt;% filter(id=="1-1") %&gt;%
+  ggplot(aes(x = date, y= temperature)) + geom_point() +
+  geom_line() +
+  geom_smooth(method="lm", se=FALSE)
+```
+
+```
+## `geom_smooth()` using formula 'y ~ x'
+```
+
+![](03_layers-nasa_files/figure-html/unnamed-chunk-3-1.png)&lt;!-- --&gt;
+
+
+
+---
+
+# Adding additional text
+
+
+```r
+nasa %&gt;% filter(id=="1-1") %&gt;%
+  ggplot(aes(x = date, y= temperature)) + geom_point() +
+  geom_line() +
+  geom_smooth(method="lm", se=FALSE) +
+  geom_text(aes(label = time, x = date+weeks(4)))
+```
+
+```
+## `geom_smooth()` using formula 'y ~ x'
+```
+
+![](03_layers-nasa_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
+
+---
+
+# Labelling specific text
+
+
+```r
+nasa %&gt;% filter(id=="1-1") %&gt;%
+  ggplot(aes(x = date, y= temperature)) + geom_point() +
+  geom_line() +
+  geom_smooth(method="lm", se=FALSE) +
+  geom_text(aes(label = time, x = date+weeks(4)),
+            nasa %&gt;% filter(id=="1-1", temperature &gt; 298))
+```
+
+```
+## `geom_smooth()` using formula 'y ~ x'
+```
+
+![](03_layers-nasa_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
+
+---
+
+# Default versus Layer Specification
+
+
+```r
+nasa %&gt;% filter(id=="1-1") %&gt;%
+  ggplot(aes(x = time, y= temperature)) + geom_point() +
+  geom_line() +
+  geom_text(aes(label=id, colour=id),  
+            data=nasa %&gt;% filter(id=="1-1", time==50))
+```
+
+![](03_layers-nasa_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
+
+---
+
+
+
+```r
+nasa %&gt;% filter(id=="1-1") %&gt;%
+  ggplot(aes(x = time, y= temperature, colour=id)) + geom_point() +
+  geom_line() +
+  geom_text(aes(label=id), 
+            data=nasa %&gt;% filter(id=="1-1", time==50))
+```
+
+![](03_layers-nasa_files/figure-html/unnamed-chunk-7-1.png)&lt;!-- --&gt;
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
