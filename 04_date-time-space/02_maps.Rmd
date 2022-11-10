@@ -206,3 +206,7 @@ class: inverse
 
 - `scale_fill_gradient2` allows you to set a color scheme with two main colors. Read up on it and change the scheme in the first choropleth map. Make the color change at the median rate of motor vehicle thefts
 
+
+
+- the package `ggthemes` provides a variety of themes that make charts look like from specific sources (e.g `theme_excel`, `theme_wsj`, `theme_economist` ...) 
+Try adding the theme `theme_map()` to the above map.
