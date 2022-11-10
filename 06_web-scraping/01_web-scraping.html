@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>DS 202 - Web Scraping</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Heike Hofmann" />
+    <script src="libs/header-attrs-2.18/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="tweaks.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# DS 202 - Web Scraping
+### Heike Hofmann
+
+---
+
+
+
+
+
+## Web Scraping 
+
+- Transform data from web pages into usable information
+
+- Automate the process
+
+![](http://webdata-scraping.com/wp-content/uploads/2013/11/web-scraping-services.png)
+
+---
+
+## `rvest` + `xml2`: Easy Web Scraping
+  
+- `read_html` gets the full set of HTML markup from a URL
+
+
+```r
+library(rvest)
+url &lt;- "https://en.wikipedia.org/wiki/2022_Baseball_Hall_of_Fame_balloting"
+html &lt;- read_html(url)
+html
+```
+
+```
+## {html_document}
+## &lt;html class="client-nojs" lang="en" dir="ltr"&gt;
+## [1] &lt;head&gt;\n&lt;meta http-equiv="Content-Type" content="text ...
+## [2] &lt;body class="skin-vector-legacy mediawiki ltr sitedir ...
+```
+
+- Use `html_attr`, `html_node`, `html_table`, and `html_text` to extract useful information from the markup
+
+---
+
+## Get a *table* from an online source
+
+`html_table` extracts all tables from the sourced html into a list of data frames:
+  
+
+```r
+tables &lt;- html %&gt;% html_table(fill=TRUE)
+tables %&gt;% str()
+```
+
+```
+## List of 8
+##  $ : tibble [6 × 2] (S3: tbl_df/tbl/data.frame)
+##   ..$ X1: chr [1:6] "via BBWAA" "via Golden Days Era Committee" "via Early Baseball Era Committee" "Total inductees" ...
+##   ..$ X2: chr [1:6] "1" "4" "2" "340" ...
+##  $ : tibble [39 × 171] (S3: tbl_df/tbl/data.frame)
+##   ..$ X1  : chr [1:39] "Hall of Fame player ballot for class of 2022[9]\nPlayer\n\nVotes\n\nPercent\n\nChange\n\nYear\nDavid Ortiz\n\n3"| __truncated__ "Player" "David Ortiz" "Barry Bonds" ...
+##   ..$ X2  : chr [1:39] "Player" "Votes" "307" "260" ...
+##   ..$ X3  : chr [1:39] "Votes" "Percent" "77.9%" "66.0%" ...
+##   ..$ X4  : chr [1:39] "Percent" "Change" "–" "04.2%" ...
+##   ..$ X5  : chr [1:39] "Change" "Year" "1st" "10th" ...
+##   ..$ X6  : chr [1:39] "Year" NA NA NA ...
+##   ..$ X7  : chr [1:39] "David Ortiz" NA NA NA ...
+##   ..$ X8  : int [1:39] 307 NA NA NA NA NA NA NA NA NA ...
+##   ..$ X9  : chr [1:39] "77.9%" NA NA NA ...
+##   ..$ X10 : chr [1:39] "–" NA NA NA ...
+##   ..$ X11 : chr [1:39] "1st" NA NA NA ...
+##   ..$ X12 : chr [1:39] "Barry Bonds" NA NA NA ...
+##   ..$ X13 : int [1:39] 260 NA NA NA NA NA NA NA NA NA ...
+##   ..$ X14 : chr [1:39] "66.0%" NA NA NA ...
+##   ..$ X15 : chr [1:39] "04.2%" NA NA NA ...
+##   ..$ X16 : chr [1:39] "10th" NA NA NA ...
+##   ..$ X17 : chr [1:39] "Roger Clemens" NA NA NA ...
+##   ..$ X18 : int [1:39] 257 NA NA NA NA NA NA NA NA NA ...
+##   ..$ X19 : chr [1:39] "65.2%" NA NA NA ...
+##   ..$ X20 : chr [1:39] "03.6%" NA NA NA ...
+##   ..$ X21 : chr [1:39] "10th" NA NA NA ...
+##   ..$ X22 : chr [1:39] "Scott Rolen" NA NA NA ...
+##   ..$ X23 : int [1:39] 249 NA NA NA NA NA NA NA NA NA ...
+##   ..$ X24 : chr [1:39] "63.2%" NA NA NA ...
+##   ..$ X25 : chr [1:39] "010.3%" NA NA NA ...
+##   ..$ X26 : chr [1:39] "5th" NA NA NA ...
+##   ..$ X27 : chr [1:39] "Curt Schilling" NA NA NA ...
+##   ..$ X28 : int [1:39] 231 NA NA NA NA NA NA NA NA NA ...
+##   ..$ X29 : chr [1:39] "58.6%" NA NA NA ...
+##   ..$ X30 : chr [1:39] "012.5%" NA NA NA ...
+##   ..$ X31 : chr [1:39] "10th" NA NA NA ...
+##   ..$ X32 : chr [1:39] "Todd Helton" NA NA NA ...
+##   ..$ X33 : int [1:39] 205 NA NA NA NA NA NA NA NA NA ...
+##   ..$ X34 : chr [1:39] "52.0%" NA NA NA ...
+##   ..$ X35 : chr [1:39] "07.1%" NA NA NA ...
+##   ..$ X36 : chr [1:39] "4th" NA NA NA ...
+##   ..$ X37 : chr [1:39] "Billy Wagner" NA NA NA ...
+##   ..$ X38 : int [1:39] 201 NA NA NA NA NA NA NA NA NA ...
+##   ..$ X39 : chr [1:39] "51.0%" NA NA NA ...
+##   ..$ X40 : chr [1:39] "04.6%" NA NA NA ...
+##   ..$ X41 : chr [1:39] "7th" NA NA NA ...
+##   ..$ X42 : chr [1:39] "Andruw Jones" NA NA NA ...
+##   ..$ X43 : int [1:39] 163 NA NA NA NA NA NA NA NA NA ...
+##   ..$ X44 : chr [1:39] "41.4%" NA NA NA ...
+##   ..$ X45 : chr [1:39] "07.5%" NA NA NA ...
+##   ..$ X46 : chr [1:39] "5th" NA NA NA ...
+##   ..$ X47 : chr [1:39] "Gary Sheffield" NA NA NA ...
+##   ..$ X48 : int [1:39] 160 NA NA NA NA NA NA NA NA NA ...
+##   ..$ X49 : chr [1:39] "40.6%" NA NA NA ...
+##   ..$ X50 : chr [1:39] "–00.0%" NA NA NA ...
+##   ..$ X51 : chr [1:39] "8th" NA NA NA ...
+##   ..$ X52 : chr [1:39] "Alex Rodriguez" NA NA NA ...
+##   ..$ X53 : int [1:39] 135 NA NA NA NA NA NA NA NA NA ...
+##   ..$ X54 : chr [1:39] "34.3%" NA NA NA ...
+##   ..$ X55 : chr [1:39] "–" NA NA NA ...
+##   ..$ X56 : chr [1:39] "1st" NA NA NA ...
+##   ..$ X57 : chr [1:39] "Jeff Kent" NA NA NA ...
+##   ..$ X58 : int [1:39] 129 NA NA NA NA NA NA NA NA NA ...
+##   ..$ X59 : chr [1:39] "32.7%" NA NA NA ...
+##   ..$ X60 : chr [1:39] "00.3%" NA NA NA ...
+##   ..$ X61 : chr [1:39] "9th" NA NA NA ...
+##   ..$ X62 : chr [1:39] "Manny Ramirez" NA NA NA ...
+##   ..$ X63 : int [1:39] 114 NA NA NA NA NA NA NA NA NA ...
+##   ..$ X64 : chr [1:39] "28.9%" NA NA NA ...
+##   ..$ X65 : chr [1:39] "00.7%" NA NA NA ...
+##   ..$ X66 : chr [1:39] "6th" NA NA NA ...
+##   ..$ X67 : chr [1:39] "Omar Vizquel" NA NA NA ...
+##   ..$ X68 : int [1:39] 94 NA NA NA NA NA NA NA NA NA ...
+##   ..$ X69 : chr [1:39] "23.9%" NA NA NA ...
+##   ..$ X70 : chr [1:39] "025.2%" NA NA NA ...
+##   ..$ X71 : chr [1:39] "5th" NA NA NA ...
+##   ..$ X72 : chr [1:39] "Sammy Sosa" NA NA NA ...
+##   ..$ X73 : int [1:39] 73 NA NA NA NA NA NA NA NA NA ...
+##   ..$ X74 : chr [1:39] "18.5%" NA NA NA ...
+##   ..$ X75 : chr [1:39] "01.5%" NA NA NA ...
+##   ..$ X76 : chr [1:39] "10th" NA NA NA ...
+##   ..$ X77 : chr [1:39] "Andy Pettitte" NA NA NA ...
+##   ..$ X78 : int [1:39] 42 NA NA NA NA NA NA NA NA NA ...
+##   ..$ X79 : chr [1:39] "10.7%" NA NA NA ...
+##   ..$ X80 : chr [1:39] "03.0%" NA NA NA ...
+##   ..$ X81 : chr [1:39] "4th" NA NA NA ...
+##   ..$ X82 : chr [1:39] "Jimmy Rollins" NA NA NA ...
+##   ..$ X83 : int [1:39] 37 NA NA NA NA NA NA NA NA NA ...
+##   ..$ X84 : chr [1:39] "9.4%" NA NA NA ...
+##   ..$ X85 : chr [1:39] "–" NA NA NA ...
+##   ..$ X86 : chr [1:39] "1st" NA NA NA ...
+##   ..$ X87 : chr [1:39] "Bobby Abreu" NA NA NA ...
+##   ..$ X88 : int [1:39] 34 NA NA NA NA NA NA NA NA NA ...
+##   ..$ X89 : chr [1:39] "8.6%" NA NA NA ...
+##   ..$ X90 : chr [1:39] "00.1%" NA NA NA ...
+##   ..$ X91 : chr [1:39] "3rd" NA NA NA ...
+##   ..$ X92 : chr [1:39] "Mark Buehrle" NA NA NA ...
+##   ..$ X93 : int [1:39] 23 NA NA NA NA NA NA NA NA NA ...
+##   ..$ X94 : chr [1:39] "5.8%" NA NA NA ...
+##   ..$ X95 : chr [1:39] "05.2%" NA NA NA ...
+##   ..$ X96 : chr [1:39] "2nd" NA NA NA ...
+##   ..$ X97 : chr [1:39] "Torii Hunter" NA NA NA ...
+##   ..$ X98 : int [1:39] 21 NA NA NA NA NA NA NA NA NA ...
+##   ..$ X99 : chr [1:39] "5.3%" NA NA NA ...
+##   .. [list output truncated]
+##  $ : tibble [30 × 5] (S3: tbl_df/tbl/data.frame)
+##   ..$ Player : chr [1:30] "David Ortiz" "Barry Bonds" "Roger Clemens" "Scott Rolen" ...
+##   ..$ Votes  : int [1:30] 307 260 257 249 231 205 201 163 160 135 ...
+##   ..$ Percent: chr [1:30] "77.9%" "66.0%" "65.2%" "63.2%" ...
+##   ..$ Change : chr [1:30] "–" "04.2%" "03.6%" "010.3%" ...
+##   ..$ Year   : chr [1:30] "1st" "10th" "10th" "5th" ...
+##  $ : tibble [7 × 2] (S3: tbl_df/tbl/data.frame)
+##   ..$ X1: chr [1:7] "" "" "" "" ...
+##   ..$ X2: chr [1:7] "Elected to the Hall of Fame on this ballot (named in bold italics)." "Elected subsequently, as of 2022[update] (named in plain italics)." "Renominated for the 2023 BBWAA election by adequate performance on this ballot." "Eliminated from annual BBWAA consideration by poor performance or expiration on subsequent ballots." ...
+##  $ : tibble [10 × 4] (S3: tbl_df/tbl/data.frame)
+##   ..$ Candidate: chr [1:10] "Buck O'Neil" "Bud Fowler" "Vic Harris" "John Donaldson" ...
+##   ..$ Category : chr [1:10] "Executive" "Executive" "Player" "Player" ...
+##   ..$ Votes    : chr [1:10] "13" "12" "10" "8" ...
+##   ..$ Percent  : chr [1:10] "81.3%" "75%" "62.5%" "50%" ...
+##  $ : tibble [10 × 4] (S3: tbl_df/tbl/data.frame)
+##   ..$ Candidate: chr [1:10] "Minnie Miñoso" "Gil Hodges" "Jim Kaat" "Tony Oliva" ...
+##   ..$ Category : chr [1:10] "Player" "Player" "Player" "Player" ...
+##   ..$ Votes    : chr [1:10] "14" "12" "12" "12" ...
+##   ..$ Percent  : chr [1:10] "87.5%" "75%" "75%" "75%" ...
+##  $ : tibble [6 × 2] (S3: tbl_df/tbl/data.frame)
+##   ..$ .mw-parser-output .navbar{display:inline;font-size:88%;font-weight:normal}.mw-parser-output .navbar-collapse{float:left;text-align:left}.mw-parser-output .navbar-boxtext{word-spacing:0}.mw-parser-output .navbar ul{display:inline-block;white-space:nowrap;line-height:inherit}.mw-parser-output .navbar-brackets::before{margin-right:-0.125em;content:"[ "}.mw-parser-output .navbar-brackets::after{margin-left:-0.125em;content:" ]"}.mw-parser-output .navbar li{word-spacing:-0.125em}.mw-parser-output .navbar a&gt;span,.mw-parser-output .navbar a&gt;abbr{text-decoration:inherit}.mw-parser-output .navbar-mini abbr{font-variant:small-caps;border-bottom:none;text-decoration:none;cursor:inherit}.mw-parser-output .navbar-ct-full{font-size:114%;margin:0 7em}.mw-parser-output .navbar-ct-mini{font-size:114%;margin:0 4em}vteBalloting for the National Baseball Hall of Fame: chr [1:6] "1930s–1940s" "1950s–1960s" "1970s–1980s" "1990s–2000s" ...
+##   ..$ .mw-parser-output .navbar{display:inline;font-size:88%;font-weight:normal}.mw-parser-output .navbar-collapse{float:left;text-align:left}.mw-parser-output .navbar-boxtext{word-spacing:0}.mw-parser-output .navbar ul{display:inline-block;white-space:nowrap;line-height:inherit}.mw-parser-output .navbar-brackets::before{margin-right:-0.125em;content:"[ "}.mw-parser-output .navbar-brackets::after{margin-left:-0.125em;content:" ]"}.mw-parser-output .navbar li{word-spacing:-0.125em}.mw-parser-output .navbar a&gt;span,.mw-parser-output .navbar a&gt;abbr{text-decoration:inherit}.mw-parser-output .navbar-mini abbr{font-variant:small-caps;border-bottom:none;text-decoration:none;cursor:inherit}.mw-parser-output .navbar-ct-full{font-size:114%;margin:0 7em}.mw-parser-output .navbar-ct-mini{font-size:114%;margin:0 4em}vteBalloting for the National Baseball Hall of Fame: chr [1:6] "1936\n1937\n1938\n1939\n1940\n1941\n1942\n1943\n1944\n1945\n1946\n1947\n1948\n1949" "1950\n1951\n1952\n1953\n1954\n1955\n1956\n1957\n1958\n1959\n1960\n1961\n1962\n1963\n1964\n1965\n1966\n1967\n1968\n1969" "1970\n1971\n1972\n1973\n1974\n1975\n1976\n1977\n1978\n1979\n1980\n1981\n1982\n1983\n1984\n1985\n1986\n1987\n1988\n1989" "1990\n1991\n1992\n1993\n1994\n1995\n1996\n1997\n1998\n1999\n2000\n2001\n2002\n2003\n2004\n2005\n2006\n2007\n2008\n2009" ...
+##  $ : tibble [5 × 2] (S3: tbl_df/tbl/data.frame)
+##   ..$ vteBaseball Hall of Fame Class of 2022: chr [1:5] "BBWAA Vote" "Early Baseball Era Committee" "Golden Days Era Committee" "BBWAA Career Excellence Award" ...
+##   ..$ vteBaseball Hall of Fame Class of 2022: chr [1:5] "David Ortiz (77.9%)" "Bud Fowler\nBuck O'Neil" "Gil Hodges\nJim Kaat\nMinnie Miñoso\nTony Oliva" "Tim Kurkjian" ...
+```
+
+---
+
+## Data Munging
+
+Most tables need a bit of clean-up:
+
+
+```r
+bbwaa &lt;- tables[[3]]  # candidates on the BBWAA Ballot
+vet1 &lt;- tables[[5]] # Early Baseball Era Committee
+vet2 &lt;- tables[[6]] # Golden Days Era Committee
+
+bbwaa %&gt;% head()
+```
+
+```
+## # A tibble: 6 × 5
+##   Player         Votes Percent Change Year 
+##   &lt;chr&gt;          &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;
+## 1 David Ortiz      307 77.9%   –      1st  
+## 2 Barry Bonds      260 66.0%   04.2%  10th 
+## 3 Roger Clemens    257 65.2%   03.6%  10th 
+## 4 Scott Rolen      249 63.2%   010.3% 5th  
+## 5 Curt Schilling   231 58.6%   012.5% 10th 
+## 6 Todd Helton      205 52.0%   07.1%  4th
+```
+
+---
+class: inverse
+
+# Your Turn
+
+Go to the site https://bbwaa.com/22-hof/#votingtable
+
+Read all tables from this website
+
+Which source should we use?
+
+---
+
+# Your Turn - Reading Data
+
+
+```r
+hof &lt;- "https://bbwaa.com/22-hof/#votingtable"
+html &lt;- read_html(hof)
+
+hof_tbl &lt;- html %&gt;% html_table()
+bbwaa &lt;- hof_tbl[[1]]
+names(bbwaa)[1] &lt;- "First Lastname"
+head(bbwaa)
+```
+
+```
+## # A tibble: 6 × 4
+##   `First Lastname` Votes Percent `Years on ballot`
+##   &lt;chr&gt;            &lt;int&gt;   &lt;dbl&gt;             &lt;int&gt;
+## 1 David Ortiz        307    77.9                 1
+## 2 Barry Bonds        260    66                  10
+## 3 Roger Clemens      257    65.2                10
+## 4 Scott Rolen        249    63.2                 5
+## 5 Curt Schilling     231    58.6                10
+## 6 Todd Helton        205    52                   4
+```
+---
+
+# Your Turn
+
+The `HallOfFame` dataset in the Lahman package has slightly different variables, as shown below. How would you go about determining these variables for the `bbwaa` data? 
+
+
+```r
+library(Lahman)
+head(HallOfFame,2)
+```
+
+```
+##   playerID yearID votedBy ballots needed votes inducted
+## 1 cobbty01   1936   BBWAA     226    170   222        Y
+## 2 ruthba01   1936   BBWAA     226    170   215        Y
+##   category needed_note
+## 1   Player        &lt;NA&gt;
+## 2   Player        &lt;NA&gt;
+```
+
+---
+
+# Your Turn - Creating new variables
+
+From https://bbwaa.com/22-hof/ : 394 ballots cast in 2022, 296 needed for induction 
+
+
+```r
+bbwaa &lt;- bbwaa %&gt;% mutate(
+  yearID = 2022,
+  votedBy = "BBWAA",
+  ballots = 394,
+  needed = 296,
+  inducted = ifelse(Votes&gt;=296, "Y", "N"),
+  category = NA, # don't know yet
+  needed_note = NA # not sure what would go here
+) %&gt;% rename(
+  votes = Votes
+) %&gt;% select(-Percent, -`Years on ballot`)
+```
+
+---
+
+# Data Munging
+
+The `People` data frame has `playerID` and players' names
+
+We could try to create a (temporary) variable in `People` called `First Lastname` that consists of `nameFirst` and `nameLast`:
+
+
+```r
+People &lt;- People %&gt;% mutate(
+  `First Lastname`=paste(`nameFirst`, `nameLast`)
+)
+```
+
+---
+class:inverse
+## Your Turn 
+
+Use the expanded version of `People` to merge the playerID info into the `bbwaa` dataset.
+
+How many playerIDs are we missing?
+
+Get the list of names that we can not match. Is there a possible reason that we can work around?
+
+---
+
+# Your Turn - Identifying Problems
+
+
+```r
+bbwaa %&gt;% anti_join(
+  People %&gt;% select(`First Lastname`, playerID), 
+  by="First Lastname")
+```
+
+```
+## # A tibble: 1 × 9
+##   First Lastna…¹ votes yearID votedBy ballots needed induc…²
+##   &lt;chr&gt;          &lt;int&gt;  &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;  
+## 1 A.J. Pierzyns…     2   2022 BBWAA       394    296 N      
+## # … with 2 more variables: category &lt;lgl&gt;,
+## #   needed_note &lt;lgl&gt;, and abbreviated variable names
+## #   ¹​`First Lastname`, ²​inducted
+```
+
+```r
+People %&gt;% filter(nameLast == "Pierzynski") %&gt;%
+  select(playerID, nameFirst, nameLast)
+```
+
+```
+##    playerID nameFirst   nameLast
+## 1 pierzaj01     A. J. Pierzynski
+```
+---
+
+# Solving Problems
+
+New idea: get rid of any white spaces after . in the first name before creating variable `First Lastname`
+
+
+```r
+People &lt;- People %&gt;% mutate(
+  `First Lastname` = paste(
+    str_replace(nameFirst,"\\. ", "."),  # this uses a regular expression
+    nameLast)
+)
+People %&gt;% filter(nameLast == "Pierzynski") %&gt;%
+  select(playerID, `First Lastname`)
+```
+
+```
+##    playerID  First Lastname
+## 1 pierzaj01 A.J. Pierzynski
+```
+
+```r
+bbwaa %&gt;% anti_join(
+  People %&gt;% select(`First Lastname`, playerID), 
+  by="First Lastname") %&gt;% nrow() # no problems anymore!
+```
+
+```
+## [1] 0
+```
+
+---
+class:inverse
+## Your Turn 
+
+The code below merges the playerID from the expanded People data into the scraped bbwaa results.
+
+
+```r
+bbwaa &lt;- bbwaa %&gt;% left_join(
+  People %&gt;% select(`First Lastname`, playerID), 
+  by="First Lastname")
+```
+
+How could we get information on the category?
+
+
+---
+
+## Beyond tables
+
+Sometimes data on the web is not structured as nicely... e.g. let's assume we want to get a list of all recently active baseball players from [Baseball reference](http://www.baseball-reference.com/players/)
+
+.center[![:scale 80%](baseball_reference.png)]
+
+---
+
+## SelectorGadget
+
+- SelectorGadget is a javascript bookmarklet to determine the css selectors of pieces of a website we want to extract.
+
+- Bookmark the [SelectorGadget](https://selectorgadget.com/) link, then click on it to use it (or add the chrome extension)
+
+- When SelectorGadget is active, pieces of the website are highlighted in orange/green/red.
+
+- Use SelectorGadget on http://www.baseball-reference.com/players/ .
+
+- Read more details on `vignette("selectorgadget")` (or on the [rvest website](https://rvest.tidyverse.org/articles/selectorgadget.html))
+
+If you prefer, you can also read the HTML code and create your own [CSS](https://www.w3schools.com/cssref/css_selectors.asp) or [XPATH](https://www.w3schools.com/xml/xpath_syntax.asp) selectors. 
+
+---
+
+## SelectorGadget Result
+
+*Select all active baseball players with a last name starting with 'a'*
+
+
+```r
+url &lt;- "http://www.baseball-reference.com/players/a/"
+html &lt;- read_html(url)
+html %&gt;% html_nodes("b") %&gt;% html_text()
+```
+
+```
+##  [1] "Fernando Abad  (2010-2021)"     
+##  [2] "Cory Abbott  (2021-2022)"       
+##  [3] "CJ Abrams  (2022-2022)"         
+##  [4] "Albert Abreu  (2020-2022)"      
+##  [5] "Bryan Abreu  (2019-2022)"       
+##  [6] "José Abreu  (2014-2022)"        
+##  [7] "Domingo Acevedo  (2021-2022)"   
+##  [8] "Ronald Acuna Jr.  (2018-2022)"  
+##  [9] "Jason Adam  (2018-2022)"        
+## [10] "Willy Adames  (2018-2022)"      
+## [11] "Austin Adams  (2017-2022)"      
+## [12] "Riley Adams  (2021-2022)"       
+## [13] "Jo Adell  (2020-2022)"          
+## [14] "Tim Adleman  (2016-2017)"       
+## [15] "Joan Adon  (2021-2022)"         
+## [16] "Ehire Adrianza  (2013-2022)"    
+## [17] "Jesus Aguilar  (2014-2022)"     
+## [18] "Miguel Aguilar  (2021-2021)"    
+## [19] "Ryan Aguilar  (2022-2022)"      
+## [20] "Nick Ahmed  (2014-2022)"        
+## [21] "Keegan Akin  (2020-2022)"       
+## [22] "Shogo Akiyama  (2020-2021)"     
+## [23] "R.J. Alaniz  (2019-2021)"       
+## [24] "Hanser Alberto  (2015-2022)"    
+## [25] "Ozzie Albies  (2017-2022)"      
+## [26] "Jorge Alcala  (2019-2022)"      
+## [27] "Sandy Alcantara  (2017-2022)"   
+## [28] "Sergio Alcantara  (2020-2022)"  
+## [29] "Jason Alexander  (2022-2022)"   
+## [30] "Scott Alexander  (2015-2022)"   
+## [31] "Tyler Alexander  (2019-2022)"   
+## [32] "A.J. Alexy  (2021-2022)"        
+## [33] "Jorge Alfaro  (2016-2022)"      
+## [34] "Anthony Alford  (2017-2022)"    
+## [35] "Kolby Allard  (2018-2022)"      
+## [36] "Cam Alldred  (2022-2022)"       
+## [37] "Austin Allen  (2019-2022)"      
+## [38] "Greg Allen  (2017-2022)"        
+## [39] "Logan Allen  (2019-2022)"       
+## [40] "Nick Allen  (2022-2022)"        
+## [41] "Nick Allgeyer  (2021-2021)"     
+## [42] "Abraham Almonte  (2013-2022)"   
+## [43] "Yency Almonte  (2018-2022)"     
+## [44] "Albert Almora  (2016-2022)"     
+## [45] "Pete Alonso  (2019-2022)"       
+## [46] "Dan Altavilla  (2016-2021)"     
+## [47] "Jose Altuve  (2011-2022)"       
+## [48] "Jose Alvarado  (2017-2022)"     
+## [49] "Eddy Alvarez  (2020-2022)"      
+## [50] "Francisco Álvarez  (2022-2022)" 
+## [51] "Jose Alvarez  (2013-2022)"      
+## [52] "R.J. Alvarez  (2014-2022)"      
+## [53] "Yordan Alvarez  (2019-2022)"    
+## [54] "Adbert Alzolay  (2019-2022)"    
+## [55] "Trey Amburgey  (2021-2021)"     
+## [56] "Brian Anderson  (2017-2022)"    
+## [57] "Chase Anderson  (2014-2022)"    
+## [58] "Ian Anderson  (2020-2022)"      
+## [59] "Justin Anderson  (2018-2019)"   
+## [60] "Nick Anderson  (2019-2021)"     
+## [61] "Shaun Anderson  (2019-2022)"    
+## [62] "Tim Anderson  (2016-2022)"      
+## [63] "Tyler Anderson  (2016-2022)"    
+## [64] "John Andreoli  (2018-2021)"     
+## [65] "Elvis Andrus  (2009-2022)"      
+## [66] "Miguel Andujar  (2017-2022)"    
+## [67] "Tejay Antone  (2020-2021)"      
+## [68] "Sherten Apostel  (2020-2020)"   
+## [69] "Mark Appel  (2022-2022)"        
+## [70] "Aristides Aquino  (2018-2022)"  
+## [71] "Jonathan Aranda  (2022-2022)"   
+## [72] "Victor Arano  (2017-2022)"      
+## [73] "Jonathan Arauz  (2020-2022)"    
+## [74] "Chris Archer  (2012-2022)"      
+## [75] "Orlando Arcia  (2016-2022)"     
+## [76] "Nolan Arenado  (2013-2022)"     
+## [77] "Gabriel Arias  (2022-2022)"     
+## [78] "Kohei Arihara  (2021-2022)"     
+## [79] "Shawn Armstrong  (2015-2022)"   
+## [80] "Jonathan Aro  (2015-2016)"      
+## [81] "Randy Arozarena  (2019-2022)"   
+## [82] "Luis Arraez  (2019-2022)"       
+## [83] "Christian Arroyo  (2017-2022)"  
+## [84] "Aaron Ashby  (2021-2022)"       
+## [85] "Graham Ashcraft  (2022-2022)"   
+## [86] "Javier Assad  (2022-2022)"      
+## [87] "Willians Astudillo  (2018-2022)"
+## [88] "Abiatal Avelino  (2018-2019)"   
+## [89] "Pedro Avila  (2019-2022)"       
+## [90] "Luis Avilan  (2012-2021)"       
+## [91] "Jose Azocar  (2022-2022)"
+```
+
+---
+
+## Example, varied
+
+We are, in fact, not just interested in the *names of the players*, but also in the *links* to each player's website
+
+- `html_attr` let's us access an attribute of an html node
+
+- `html_attrs` extracts all attributes of an html node
+
+
+```r
+html %&gt;% html_nodes("b a") %&gt;% html_attr(name="href")
+```
+
+```
+##  [1] "/players/a/abadfe01.shtml" 
+##  [2] "/players/a/abbotco01.shtml"
+##  [3] "/players/a/abramcj01.shtml"
+##  [4] "/players/a/abreual01.shtml"
+##  [5] "/players/a/abreubr01.shtml"
+##  [6] "/players/a/abreujo02.shtml"
+##  [7] "/players/a/acevedo01.shtml"
+##  [8] "/players/a/acunaro01.shtml"
+##  [9] "/players/a/adamja01.shtml" 
+## [10] "/players/a/adamewi01.shtml"
+## [11] "/players/a/adamsau02.shtml"
+## [12] "/players/a/adamsri03.shtml"
+## [13] "/players/a/adelljo01.shtml"
+## [14] "/players/a/adlemti01.shtml"
+## [15] "/players/a/adonjo01.shtml" 
+## [16] "/players/a/adriaeh01.shtml"
+## [17] "/players/a/aguilje01.shtml"
+## [18] "/players/a/aguilmi01.shtml"
+## [19] "/players/a/aguilry01.shtml"
+## [20] "/players/a/ahmedni01.shtml"
+## [21] "/players/a/akinke01.shtml" 
+## [22] "/players/a/akiyash01.shtml"
+## [23] "/players/a/alanirj01.shtml"
+## [24] "/players/a/alberha01.shtml"
+## [25] "/players/a/albieoz01.shtml"
+## [26] "/players/a/alcaljo01.shtml"
+## [27] "/players/a/alcansa01.shtml"
+## [28] "/players/a/alcanse01.shtml"
+## [29] "/players/a/alexaja01.shtml"
+## [30] "/players/a/alexasc02.shtml"
+## [31] "/players/a/alexaty01.shtml"
+## [32] "/players/a/alexyaj01.shtml"
+## [33] "/players/a/alfarjo01.shtml"
+## [34] "/players/a/alforan01.shtml"
+## [35] "/players/a/allarko01.shtml"
+## [36] "/players/a/alldrca01.shtml"
+## [37] "/players/a/allenau01.shtml"
+## [38] "/players/a/allengr01.shtml"
+## [39] "/players/a/allenlo01.shtml"
+## [40] "/players/a/allenni02.shtml"
+## [41] "/players/a/allgeni01.shtml"
+## [42] "/players/a/almonab01.shtml"
+## [43] "/players/a/almonye01.shtml"
+## [44] "/players/a/almoral01.shtml"
+## [45] "/players/a/alonspe01.shtml"
+## [46] "/players/a/altavda01.shtml"
+## [47] "/players/a/altuvjo01.shtml"
+## [48] "/players/a/alvarjo03.shtml"
+## [49] "/players/a/alvared01.shtml"
+## [50] "/players/a/alvarfr01.shtml"
+## [51] "/players/a/alvarjo02.shtml"
+## [52] "/players/a/alvarrj01.shtml"
+## [53] "/players/a/alvaryo01.shtml"
+## [54] "/players/a/alzolad01.shtml"
+## [55] "/players/a/amburtr01.shtml"
+## [56] "/players/a/anderbr06.shtml"
+## [57] "/players/a/anderch01.shtml"
+## [58] "/players/a/anderia01.shtml"
+## [59] "/players/a/anderju01.shtml"
+## [60] "/players/a/anderni01.shtml"
+## [61] "/players/a/andersh01.shtml"
+## [62] "/players/a/anderti01.shtml"
+## [63] "/players/a/anderty01.shtml"
+## [64] "/players/a/andrejo03.shtml"
+## [65] "/players/a/andruel01.shtml"
+## [66] "/players/a/andujmi01.shtml"
+## [67] "/players/a/antonte01.shtml"
+## [68] "/players/a/apostsh01.shtml"
+## [69] "/players/a/appelma01.shtml"
+## [70] "/players/a/aquinar01.shtml"
+## [71] "/players/a/arandjo01.shtml"
+## [72] "/players/a/aranovi01.shtml"
+## [73] "/players/a/arauzjo01.shtml"
+## [74] "/players/a/archech01.shtml"
+## [75] "/players/a/arciaor01.shtml"
+## [76] "/players/a/arenano01.shtml"
+## [77] "/players/a/ariasga01.shtml"
+## [78] "/players/a/arihako01.shtml"
+## [79] "/players/a/armstsh01.shtml"
+## [80] "/players/a/arojo01.shtml"  
+## [81] "/players/a/arozara01.shtml"
+## [82] "/players/a/arraelu01.shtml"
+## [83] "/players/a/arroych01.shtml"
+## [84] "/players/a/ashbyaa01.shtml"
+## [85] "/players/a/ashcrgr01.shtml"
+## [86] "/players/a/assadja01.shtml"
+## [87] "/players/a/astudwi01.shtml"
+## [88] "/players/a/aveliab01.shtml"
+## [89] "/players/a/avilape01.shtml"
+## [90] "/players/a/avilalu01.shtml"
+## [91] "/players/a/azocajo01.shtml"
+```
+
+---
+class:inverse
+## Your Turn
+
+Use the SelectorGadget on the website for [Fernando Abad](https://www.baseball-reference.com/players/a/abadfe01.shtml)
+
+Find the css selector to extract his career statistics and load them into your R session.
+
+Does the same code work to extract career statistics for (some)  of the other active players? 
+
+What other information do we need to know? - and how can we get to that?
+
+---
+
+## Your Turn  - Solution
+
+
+```r
+url &lt;- "https://www.baseball-reference.com/players/a/abadfe01.shtml"
+html &lt;- read_html(url)
+html %&gt;% html_nodes(".stats_pullout") %&gt;% html_text()
+```
+
+```
+## [1] "\n\nSUMMARY\n\nCareer\n\n\n\nWAR\n3.1\n\n\nW\n8\n\n\nL\n29\n\n\nERA\n3.77\n\n\nG\n400\n\n\nGS\n6\n\n\nSV\n2\n\n\nIP\n348.1\n\n\nSO\n290\n\n\nWHIP\n1.306\n\n\n\n"
+```
+
+```r
+html %&gt;% html_nodes(".stats_pullout .poptip") %&gt;% html_text()
+```
+
+```
+##  [1] "WAR"  "W"    "L"    "ERA"  "G"    "GS"   "SV"   "IP"  
+##  [9] "SO"   "WHIP"
+```
+
+```r
+html %&gt;% html_nodes(".p3 p , .p2 p, .p1 p, .stats_pullout strong") %&gt;% html_text()
+```
+
+```
+##  [1] "SUMMARY" "Career"  "WAR"     "3.1"     "W"      
+##  [6] "8"       "L"       "29"      "ERA"     "3.77"   
+## [11] "G"       "400"     "GS"      "6"       "SV"     
+## [16] "2"       "IP"      "348.1"   "SO"      "290"    
+## [21] "WHIP"    "1.306"
+```
+
+```r
+html %&gt;% html_nodes(".p1") %&gt;% html_text()
+```
+
+```
+## [1] "\n\nWAR\n3.1\n\n\nW\n8\n\n\nL\n29\n\n\nERA\n3.77\n"
+```
+---
+
+## Your Turn - Solution (cont'd)
+
+It's sometimes easier (for data munging after extracting) to extract multiple pieces rather than everything in one go. 
+
+```r
+(stats &lt;- html %&gt;% html_nodes("span strong") %&gt;% html_text())
+```
+
+```
+##  [1] "SUMMARY" "WAR"     "W"       "L"       "ERA"    
+##  [6] "G"       "GS"      "SV"      "IP"      "SO"     
+## [11] "WHIP"
+```
+
+```r
+(season &lt;- html %&gt;% html_nodes(".stats_pullout p:nth-child(2)") %&gt;% html_text())
+```
+
+```
+##  [1] "Career" "3.1"    "8"      "29"     "3.77"   "400"   
+##  [7] "6"      "2"      "348.1"  "290"    "1.306"
+```
+
+```r
+(career &lt;- html %&gt;% html_nodes(".stats_pullout p:nth-child(3)") %&gt;% html_text())
+```
+
+```
+## character(0)
+```
+
+
+---
+
+## Package `rvest`
+
+
+The `session` suite of commands allows to simulate an html session without a browser.
+
+Create a session with `session(url)`
+
+Navigate: `session_jump_to()` 
+Follow a link: `session_follow_link()`.
+
+navigate back and forward with `session_back()` and `session_forward()`.
+
+... and extract the pieces you are interested in using `read_html`, `html_element`, `html_elements`
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

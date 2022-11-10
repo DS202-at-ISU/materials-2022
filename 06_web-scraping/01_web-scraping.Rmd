@@ -1,0 +1,298 @@
+---
+title: "DS 202 - Web Scraping"
+author: "Heike Hofmann"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: [default, default-fonts, "tweaks.css"]
+    nature:
+      beforeInit: "macros.js"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+```{r setup, include=FALSE, message=FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE, dpi= 300)
+options(width=60)
+library(tidyverse)
+```
+
+
+
+## Web Scraping 
+
+- Transform data from web pages into usable information
+
+- Automate the process
+
+![](http://webdata-scraping.com/wp-content/uploads/2013/11/web-scraping-services.png)
+
+---
+
+## `rvest` + `xml2`: Easy Web Scraping
+  
+- `read_html` gets the full set of HTML markup from a URL
+
+```{r warning = FALSE, message = FALSE}
+library(rvest)
+url <- "https://en.wikipedia.org/wiki/2022_Baseball_Hall_of_Fame_balloting"
+html <- read_html(url)
+html
+```
+
+- Use `html_attr`, `html_node`, `html_table`, and `html_text` to extract useful information from the markup
+
+---
+
+## Get a *table* from an online source
+
+`html_table` extracts all tables from the sourced html into a list of data frames:
+  
+```{r}
+tables <- html %>% html_table(fill=TRUE)
+tables %>% str()
+```
+
+---
+
+## Data Munging
+
+Most tables need a bit of clean-up:
+
+```{r}
+bbwaa <- tables[[3]]  # candidates on the BBWAA Ballot
+vet1 <- tables[[5]] # Early Baseball Era Committee
+vet2 <- tables[[6]] # Golden Days Era Committee
+
+bbwaa %>% head()
+```
+
+---
+class: inverse
+
+# Your Turn
+
+Go to the site https://bbwaa.com/22-hof/#votingtable
+
+Read all tables from this website
+
+Which source should we use?
+
+---
+
+# Your Turn - Reading Data
+
+```{r}
+hof <- "https://bbwaa.com/22-hof/#votingtable"
+html <- read_html(hof)
+
+hof_tbl <- html %>% html_table()
+bbwaa <- hof_tbl[[1]]
+names(bbwaa)[1] <- "First Lastname"
+head(bbwaa)
+```
+---
+
+# Your Turn
+
+The `HallOfFame` dataset in the Lahman package has slightly different variables, as shown below. How would you go about determining these variables for the `bbwaa` data? 
+
+```{r}
+library(Lahman)
+head(HallOfFame,2)
+```
+
+---
+
+# Your Turn - Creating new variables
+
+From https://bbwaa.com/22-hof/ : 394 ballots cast in 2022, 296 needed for induction 
+
+```{r}
+bbwaa <- bbwaa %>% mutate(
+  yearID = 2022,
+  votedBy = "BBWAA",
+  ballots = 394,
+  needed = 296,
+  inducted = ifelse(Votes>=296, "Y", "N"),
+  category = NA, # don't know yet
+  needed_note = NA # not sure what would go here
+) %>% rename(
+  votes = Votes
+) %>% select(-Percent, -`Years on ballot`)
+```
+
+---
+
+# Data Munging
+
+The `People` data frame has `playerID` and players' names
+
+We could try to create a (temporary) variable in `People` called `First Lastname` that consists of `nameFirst` and `nameLast`:
+
+```{r}
+People <- People %>% mutate(
+  `First Lastname`=paste(`nameFirst`, `nameLast`)
+)
+```
+
+---
+class:inverse
+## Your Turn 
+
+Use the expanded version of `People` to merge the playerID info into the `bbwaa` dataset.
+
+How many playerIDs are we missing?
+
+Get the list of names that we can not match. Is there a possible reason that we can work around?
+
+---
+
+# Your Turn - Identifying Problems
+
+```{r}
+bbwaa %>% anti_join(
+  People %>% select(`First Lastname`, playerID), 
+  by="First Lastname")
+
+People %>% filter(nameLast == "Pierzynski") %>%
+  select(playerID, nameFirst, nameLast)
+
+```
+---
+
+# Solving Problems
+
+New idea: get rid of any white spaces after . in the first name before creating variable `First Lastname`
+
+```{r}
+People <- People %>% mutate(
+  `First Lastname` = paste(
+    str_replace(nameFirst,"\\. ", "."),  # this uses a regular expression
+    nameLast)
+)
+People %>% filter(nameLast == "Pierzynski") %>%
+  select(playerID, `First Lastname`)
+
+bbwaa %>% anti_join(
+  People %>% select(`First Lastname`, playerID), 
+  by="First Lastname") %>% nrow() # no problems anymore!
+```
+
+---
+class:inverse
+## Your Turn 
+
+The code below merges the playerID from the expanded People data into the scraped bbwaa results.
+
+```{r}
+bbwaa <- bbwaa %>% left_join(
+  People %>% select(`First Lastname`, playerID), 
+  by="First Lastname")
+```
+
+How could we get information on the category?
+
+
+---
+
+## Beyond tables
+
+Sometimes data on the web is not structured as nicely... e.g. let's assume we want to get a list of all recently active baseball players from [Baseball reference](http://www.baseball-reference.com/players/)
+
+.center[![:scale 80%](baseball_reference.png)]
+
+---
+
+## SelectorGadget
+
+- SelectorGadget is a javascript bookmarklet to determine the css selectors of pieces of a website we want to extract.
+
+- Bookmark the [SelectorGadget](https://selectorgadget.com/) link, then click on it to use it (or add the chrome extension)
+
+- When SelectorGadget is active, pieces of the website are highlighted in orange/green/red.
+
+- Use SelectorGadget on http://www.baseball-reference.com/players/ .
+
+- Read more details on `vignette("selectorgadget")` (or on the [rvest website](https://rvest.tidyverse.org/articles/selectorgadget.html))
+
+If you prefer, you can also read the HTML code and create your own [CSS](https://www.w3schools.com/cssref/css_selectors.asp) or [XPATH](https://www.w3schools.com/xml/xpath_syntax.asp) selectors. 
+
+---
+
+## SelectorGadget Result
+
+*Select all active baseball players with a last name starting with 'a'*
+
+```{r}
+url <- "http://www.baseball-reference.com/players/a/"
+html <- read_html(url)
+html %>% html_nodes("b") %>% html_text()
+```
+
+---
+
+## Example, varied
+
+We are, in fact, not just interested in the *names of the players*, but also in the *links* to each player's website
+
+- `html_attr` let's us access an attribute of an html node
+
+- `html_attrs` extracts all attributes of an html node
+
+```{r}
+html %>% html_nodes("b a") %>% html_attr(name="href")
+```
+
+---
+class:inverse
+## Your Turn
+
+Use the SelectorGadget on the website for [Fernando Abad](https://www.baseball-reference.com/players/a/abadfe01.shtml)
+
+Find the css selector to extract his career statistics and load them into your R session.
+
+Does the same code work to extract career statistics for (some)  of the other active players? 
+
+What other information do we need to know? - and how can we get to that?
+
+---
+
+## Your Turn  - Solution
+
+```{r}
+url <- "https://www.baseball-reference.com/players/a/abadfe01.shtml"
+html <- read_html(url)
+html %>% html_nodes(".stats_pullout") %>% html_text()
+html %>% html_nodes(".stats_pullout .poptip") %>% html_text()
+html %>% html_nodes(".p3 p , .p2 p, .p1 p, .stats_pullout strong") %>% html_text()
+
+html %>% html_nodes(".p1") %>% html_text()
+```
+---
+
+## Your Turn - Solution (cont'd)
+
+It's sometimes easier (for data munging after extracting) to extract multiple pieces rather than everything in one go. 
+```{r}
+(stats <- html %>% html_nodes("span strong") %>% html_text())
+(season <- html %>% html_nodes(".stats_pullout p:nth-child(2)") %>% html_text())
+(career <- html %>% html_nodes(".stats_pullout p:nth-child(3)") %>% html_text())
+```
+
+
+---
+
+## Package `rvest`
+
+
+The `session` suite of commands allows to simulate an html session without a browser.
+
+Create a session with `session(url)`
+
+Navigate: `session_jump_to()` 
+Follow a link: `session_follow_link()`.
+
+navigate back and forward with `session_back()` and `session_forward()`.
+
+... and extract the pieces you are interested in using `read_html`, `html_element`, `html_elements`
