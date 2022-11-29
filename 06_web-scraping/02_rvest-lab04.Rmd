@@ -1,0 +1,203 @@
+---
+title: "DS 202 - lab #4: Scraping (into) the Hall of Fame"
+author: Heike Hofmann
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+# Outline
+
+- example of scraping with selectors
+
+---
+# Data Background
+
+The Lahman data package is based on [Sean Lahman](https://www.seanlahman.com/)'s  Baseball  [Database](https://www.seanlahman.com/baseball-archive/statistics/). 
+
+The `HallOfFame` table is a part of this set of tables and  has [not been updated since 2018](https://github.com/chadwickbureau/baseballdatabank/commits/a0b17f910506f7bfc2be2f834c50d50beb884c8f/core/HallOfFame.csv?browsing_rename_history=true&new_path=contrib/HallOfFame.csv&original_branch=master)
+
+## Baseball Reference 
+
+The site baseball-reference.com has grown out of Sean Lahman's work and is now maintained independently. 
+
+ Incidentally, it also has tables with Hall of Fame information, e.g. for 2022: 
+
+https://www.baseball-reference.com/awards/hof_2022.shtml
+
+---
+# Scrape the data
+
+Use the `rvest` package to download and parse data tables for Hall of Fame voting records. 
+
+```{r message=FALSE}
+url <- "https://www.baseball-reference.com/awards/hof_2022.shtml"
+
+library(rvest)
+site <- read_html(url)
+```
+
+The command `html_element` allows us to select based on css selectors (www3 school CSS)[https://www.w3schools.com/CSSref/css_selectors.php] or (CSS Diner)[https://flukeout.github.io/]
+
+Load the baseball reference website in Chrome. Then use View > Developer > Inspect Elements.
+
+What id should we use?
+
+---
+
+# BBWAA Table
+
+table has id `hof_BBWAA`:
+
+```{r}
+site %>% html_element(css="#hof_BBWAA") %>% html_table() %>% head(3)
+```
+
+Solve the problem with the first row by writing the table into a temporary file and reading it back in.
+
+---
+
+# Write the table, read the table
+
+```{r}
+bbwaa <- site %>% html_element(css="#hof_BBWAA") %>% html_table() 
+readr::write_csv(bbwaa, "temp.csv")
+bbwaa <- readr::read_csv("temp.csv", skip = 1, show_col_types = FALSE)
+head(bbwaa)
+```
+
+
+---
+
+# Clean the data
+
+What steps are necessary to get the scraped data into the shape as the `HallOfFame` data table:
+
+```{r}
+library(Lahman)
+head(HallOfFame, 3)
+```
+How do we get the number of ballots and needed votes? - Go back to Chrome!
+
+---
+
+# Data Munging
+
+```{r}
+site %>% html_element(css="#hof_BBWAA_sh div") %>% html_text()
+```
+```{r}
+bbwaa <- bbwaa %>% select(1:7) %>% 
+  mutate(
+  yearID = 2022,
+  votedBy = "BBWAA",
+  ballots = 394,
+  needed = 296,
+  votes = Votes,
+  inducted = ifelse(votes >= 296, "Y", "N"),
+  category = "Player",
+  needed_note = NA
+)
+```
+
+How do we get `playerID`? 
+
+---
+
+# Match `People` and `bbwaa` by players' names
+
+```{r}
+People <- People %>% mutate(
+  Name = paste(nameFirst, nameLast)
+)
+
+bbwaa <- bbwaa %>% mutate(
+  Name = gsub("X-", "", Name)
+)
+```
+
+anti join: what will go wrong?
+
+```{r}
+bbwaa %>% anti_join(People %>% select(Name, playerID), by="Name")
+```
+
+---
+
+# what's with Pierzynski?
+
+```{r}
+People %>% filter(nameLast=="Pierzynski") %>% select(Name, playerID)
+```
+There is an extra space!
+
+Idea: replace all occurrences of . by a space ' ', then delete multiple spaces
+
+---
+
+# Space 
+
+```{r}
+People <- People %>% mutate(
+  Name = gsub(".", " ", Name, fixed=TRUE),
+  Name = gsub("  ", " ", Name)
+)
+bbwaa <- bbwaa %>% mutate(
+  Name = gsub(".", " ", Name, fixed=TRUE),
+  Name = gsub("  ", " ", Name)
+)
+
+bbwaa %>% anti_join(People %>% select(Name, playerID), by="Name")
+```
+Now we can join the data sets
+
+---
+
+# Getting the player ID
+
+```{r}
+bbwaa <- bbwaa %>% left_join(People %>% select(Name, playerID), by="Name")
+```
+
+# The right variables in the right order
+
+```{r}
+bbwaa %>% select(names(HallOfFame))
+```
+
+
+
+
+---
+# Deliverable: data
+
+```{r fig.width= 12, fig.height = 4, warning = FALSE}
+HallOfFame <- rbind(HallOfFame, bbwaa %>% select(names(HallOfFame)))
+
+HallOfFame %>% 
+  ggplot(aes(x = yearID, fill = inducted)) +
+  geom_bar() +
+  xlim(c(1936, 2023))
+```
+
+---
+
+# Still missing
+
+- Veterans' votes for 2022
+
+- Hall of fame data for 2021
+
+- Hall of fame data for 2020
+
+- Hall of fame data for 2019
+
+Lots of repetition! 

@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>DS 202 - lab #4: Scraping (into) the Hall of Fame</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Heike Hofmann" />
+    <script src="libs/header-attrs-2.18/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# DS 202 - lab #4: Scraping (into) the Hall of Fame
+]
+.author[
+### Heike Hofmann
+]
+
+---
+
+
+
+# Outline
+
+- example of scraping with selectors
+
+---
+# Data Background
+
+The Lahman data package is based on [Sean Lahman](https://www.seanlahman.com/)'s  Baseball  [Database](https://www.seanlahman.com/baseball-archive/statistics/). 
+
+The `HallOfFame` table is a part of this set of tables and  has [not been updated since 2018](https://github.com/chadwickbureau/baseballdatabank/commits/a0b17f910506f7bfc2be2f834c50d50beb884c8f/core/HallOfFame.csv?browsing_rename_history=true&amp;new_path=contrib/HallOfFame.csv&amp;original_branch=master)
+
+## Baseball Reference 
+
+The site baseball-reference.com has grown out of Sean Lahman's work and is now maintained independently. 
+
+ Incidentally, it also has tables with Hall of Fame information, e.g. for 2022: 
+
+https://www.baseball-reference.com/awards/hof_2022.shtml
+
+---
+# Scrape the data
+
+Use the `rvest` package to download and parse data tables for Hall of Fame voting records. 
+
+
+```r
+url &lt;- "https://www.baseball-reference.com/awards/hof_2022.shtml"
+
+library(rvest)
+site &lt;- read_html(url)
+```
+
+The command `html_element` allows us to select based on css selectors (www3 school CSS)[https://www.w3schools.com/CSSref/css_selectors.php] or (CSS Diner)[https://flukeout.github.io/]
+
+Load the baseball reference website in Chrome. Then use View &gt; Developer &gt; Inspect Elements.
+
+What id should we use?
+
+---
+
+# BBWAA Table
+
+table has id `hof_BBWAA`:
+
+
+```r
+site %&gt;% html_element(css="#hof_BBWAA") %&gt;% html_table() %&gt;% head(3)
+```
+
+```
+## # A tibble: 3 × 39
+##   ``    ``           ``    ``    ``    ``    ``    ``    ``    ``    ``    ``   
+##   &lt;chr&gt; &lt;chr&gt;        &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+## 1 Rk    Name         YoB   Votes %vote HOFm  HOFs  Yrs   WAR   WAR7  JAWS  Jpos 
+## 2 1     David Ortiz  1st   307   77.9% 171   55    20    55.3  35.2  45.3  53.8 
+## 3 2     X-Barry Bon… 10th  260   66.0% 340   77    22    162.8 72.7  117.8 53.4 
+## # … with 27 more variables: `Batting Stats` &lt;chr&gt;, `Batting Stats` &lt;chr&gt;,
+## #   `Batting Stats` &lt;chr&gt;, `Batting Stats` &lt;chr&gt;, `Batting Stats` &lt;chr&gt;,
+## #   `Batting Stats` &lt;chr&gt;, `Batting Stats` &lt;chr&gt;, `Batting Stats` &lt;chr&gt;,
+## #   `Batting Stats` &lt;chr&gt;, `Batting Stats` &lt;chr&gt;, `Batting Stats` &lt;chr&gt;,
+## #   `Batting Stats` &lt;chr&gt;, `Batting Stats` &lt;chr&gt;, `Pitching Stats` &lt;chr&gt;,
+## #   `Pitching Stats` &lt;chr&gt;, `Pitching Stats` &lt;chr&gt;, `Pitching Stats` &lt;chr&gt;,
+## #   `Pitching Stats` &lt;chr&gt;, `Pitching Stats` &lt;chr&gt;, `Pitching Stats` &lt;chr&gt;, …
+```
+
+Solve the problem with the first row by writing the table into a temporary file and reading it back in.
+
+---
+
+# Write the table, read the table
+
+
+```r
+bbwaa &lt;- site %&gt;% html_element(css="#hof_BBWAA") %&gt;% html_table() 
+readr::write_csv(bbwaa, "temp.csv")
+bbwaa &lt;- readr::read_csv("temp.csv", skip = 1, show_col_types = FALSE)
+```
+
+```
+## New names:
+## • `G` -&gt; `G...13`
+## • `H` -&gt; `H...16`
+## • `HR` -&gt; `HR...17`
+## • `BB` -&gt; `BB...20`
+## • `G` -&gt; `G...31`
+## • `H` -&gt; `H...35`
+## • `HR` -&gt; `HR...36`
+## • `BB` -&gt; `BB...37`
+```
+
+```r
+head(bbwaa)
+```
+
+```
+## # A tibble: 6 × 39
+##      Rk Name       YoB   Votes `%vote`  HOFm  HOFs   Yrs   WAR  WAR7  JAWS  Jpos
+##   &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     1 David Ort… 1st     307 77.9%     171    55    20  55.3  35.2  45.3  53.8
+## 2     2 X-Barry B… 10th    260 66.0%     340    77    22 163.   72.7 118.   53.4
+## 3     3 X-Roger C… 10th    257 65.2%     332    73    24 139.   65.9 103.   61.4
+## 4     4 Scott Rol… 5th     249 63.2%      99    40    17  70.1  43.6  56.9  55.7
+## 5     5 X-Curt Sc… 10th    231 58.6%     171    46    20  79.5  48.6  64    61.4
+## 6     6 Todd Helt… 4th     205 52.0%     175    59    17  61.8  46.6  54.2  53.8
+## # … with 27 more variables: G...13 &lt;dbl&gt;, AB &lt;dbl&gt;, R &lt;dbl&gt;, H...16 &lt;dbl&gt;,
+## #   HR...17 &lt;dbl&gt;, RBI &lt;dbl&gt;, SB &lt;dbl&gt;, BB...20 &lt;dbl&gt;, BA &lt;dbl&gt;, OBP &lt;dbl&gt;,
+## #   SLG &lt;dbl&gt;, OPS &lt;dbl&gt;, `OPS+` &lt;dbl&gt;, W &lt;dbl&gt;, L &lt;dbl&gt;, ERA &lt;dbl&gt;,
+## #   `ERA+` &lt;dbl&gt;, WHIP &lt;dbl&gt;, G...31 &lt;dbl&gt;, GS &lt;dbl&gt;, SV &lt;dbl&gt;, IP &lt;dbl&gt;,
+## #   H...35 &lt;dbl&gt;, HR...36 &lt;dbl&gt;, BB...37 &lt;dbl&gt;, SO &lt;dbl&gt;, `Pos Summary` &lt;chr&gt;
+```
+
+
+---
+
+# Clean the data
+
+What steps are necessary to get the scraped data into the shape as the `HallOfFame` data table:
+
+
+```r
+library(Lahman)
+head(HallOfFame, 3)
+```
+
+```
+##    playerID yearID votedBy ballots needed votes inducted category needed_note
+## 1  cobbty01   1936   BBWAA     226    170   222        Y   Player        &lt;NA&gt;
+## 2  ruthba01   1936   BBWAA     226    170   215        Y   Player        &lt;NA&gt;
+## 3 wagneho01   1936   BBWAA     226    170   215        Y   Player        &lt;NA&gt;
+```
+How do we get the number of ballots and needed votes? - Go back to Chrome!
+
+---
+
+# Data Munging
+
+
+```r
+site %&gt;% html_element(css="#hof_BBWAA_sh div") %&gt;% html_text()
+```
+
+```
+## [1] "\n      394 total ballots (296 votes needed for election)\n      "
+```
+
+```r
+bbwaa &lt;- bbwaa %&gt;% select(1:7) %&gt;% 
+  mutate(
+  yearID = 2022,
+  votedBy = "BBWAA",
+  ballots = 394,
+  needed = 296,
+  votes = Votes,
+  inducted = ifelse(votes &gt;= 296, "Y", "N"),
+  category = "Player",
+  needed_note = NA
+)
+```
+
+How do we get `playerID`? 
+
+---
+
+# Match `People` and `bbwaa` by players' names
+
+
+```r
+People &lt;- People %&gt;% mutate(
+  Name = paste(nameFirst, nameLast)
+)
+
+bbwaa &lt;- bbwaa %&gt;% mutate(
+  Name = gsub("X-", "", Name)
+)
+```
+
+anti join: what will go wrong?
+
+
+```r
+bbwaa %&gt;% anti_join(People %&gt;% select(Name, playerID), by="Name")
+```
+
+```
+## # A tibble: 1 × 15
+##      Rk Name       YoB   Votes `%vote`  HOFm  HOFs yearID votedBy ballots needed
+##   &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt;
+## 1    27 A.J. Pier… 1st       2 0.5%      108    30   2022 BBWAA       394    296
+## # … with 4 more variables: votes &lt;dbl&gt;, inducted &lt;chr&gt;, category &lt;chr&gt;,
+## #   needed_note &lt;lgl&gt;
+```
+
+---
+
+# what's with Pierzynski?
+
+
+```r
+People %&gt;% filter(nameLast=="Pierzynski") %&gt;% select(Name, playerID)
+```
+
+```
+##               Name  playerID
+## 1 A. J. Pierzynski pierzaj01
+```
+There is an extra space!
+
+Idea: replace all occurrences of . by a space ' ', then delete multiple spaces
+
+---
+
+# Space 
+
+
+```r
+People &lt;- People %&gt;% mutate(
+  Name = gsub(".", " ", Name, fixed=TRUE),
+  Name = gsub("  ", " ", Name)
+)
+bbwaa &lt;- bbwaa %&gt;% mutate(
+  Name = gsub(".", " ", Name, fixed=TRUE),
+  Name = gsub("  ", " ", Name)
+)
+
+bbwaa %&gt;% anti_join(People %&gt;% select(Name, playerID), by="Name")
+```
+
+```
+## # A tibble: 0 × 15
+## # … with 15 variables: Rk &lt;dbl&gt;, Name &lt;chr&gt;, YoB &lt;chr&gt;, Votes &lt;dbl&gt;,
+## #   %vote &lt;chr&gt;, HOFm &lt;dbl&gt;, HOFs &lt;dbl&gt;, yearID &lt;dbl&gt;, votedBy &lt;chr&gt;,
+## #   ballots &lt;dbl&gt;, needed &lt;dbl&gt;, votes &lt;dbl&gt;, inducted &lt;chr&gt;, category &lt;chr&gt;,
+## #   needed_note &lt;lgl&gt;
+```
+Now we can join the data sets
+
+---
+
+# Getting the player ID
+
+
+```r
+bbwaa &lt;- bbwaa %&gt;% left_join(People %&gt;% select(Name, playerID), by="Name")
+```
+
+# The right variables in the right order
+
+
+```r
+bbwaa %&gt;% select(names(HallOfFame))
+```
+
+```
+## # A tibble: 30 × 9
+##    playerID  yearID votedBy ballots needed votes inducted category needed_note
+##    &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;    &lt;lgl&gt;      
+##  1 ortizda01   2022 BBWAA       394    296   307 Y        Player   NA         
+##  2 bondsba01   2022 BBWAA       394    296   260 N        Player   NA         
+##  3 clemero02   2022 BBWAA       394    296   257 N        Player   NA         
+##  4 rolensc01   2022 BBWAA       394    296   249 N        Player   NA         
+##  5 schilcu01   2022 BBWAA       394    296   231 N        Player   NA         
+##  6 heltoto01   2022 BBWAA       394    296   205 N        Player   NA         
+##  7 wagnebi02   2022 BBWAA       394    296   201 N        Player   NA         
+##  8 jonesan01   2022 BBWAA       394    296   163 N        Player   NA         
+##  9 sheffga01   2022 BBWAA       394    296   160 N        Player   NA         
+## 10 rodrial01   2022 BBWAA       394    296   135 N        Player   NA         
+## # … with 20 more rows
+```
+
+
+
+
+---
+# Deliverable: data
+
+
+```r
+HallOfFame &lt;- rbind(HallOfFame, bbwaa %&gt;% select(names(HallOfFame)))
+
+HallOfFame %&gt;% 
+  ggplot(aes(x = yearID, fill = inducted)) +
+  geom_bar() +
+  xlim(c(1936, 2023))
+```
+
+![](02_rvest-lab04_files/figure-html/unnamed-chunk-13-1.png)&lt;!-- --&gt;
+
+---
+
+# Still missing
+
+- Veterans' votes for 2022
+
+- Hall of fame data for 2021
+
+- Hall of fame data for 2020
+
+- Hall of fame data for 2019
+
+Lots of repetition! 
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
