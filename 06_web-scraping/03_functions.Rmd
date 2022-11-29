@@ -1,0 +1,140 @@
+---
+title: "Functions in R"
+author: "Heike Hofmann"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: middle, inverse, center
+# Function writing
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(lubridate)
+```
+
+---
+
+# Functions in R
+
+- Have been using functions a lot, now we want to write them ourselves!
+
+- Idea: avoid repetitive coding (errors will creep in)
+
+- Instead: extract common core, wrap it in a function, make it reusable
+
+
+---
+
+# Structure of functions
+
+- Name
+
+- Input arguments
+
+    - names, 
+
+    - default values
+
+- Body
+
+- Output values
+
+---
+
+# A first function
+
+```{r}
+mymean <- function(x) {
+	return(sum(x)/length(x))
+}
+```
+
+```{r}
+mymean(1:15)
+mymean(c(1:15, NA))
+```
+
+---
+
+# A first function (2)
+
+```{r}
+mymean <- function(x, na.rm=F) {
+	if (na.rm) x <- na.omit(x)
+	
+	return(sum(x)/length(x))
+}
+
+mymean(1:15)
+mymean(c(1:15, NA), na.rm=T)
+```
+
+
+---
+class: inverse
+# Your Turn: a scraper 
+
+The package `rvest` allows us to download data from the baseball reference website `url` using the following lines of code:
+
+```
+library(rvest)
+site <- read_html(url)
+bbwaa <- site %>% html_element("#hof_BBWAA") %>% html_table()
+
+head(bbwaa)
+```
+
+Write a function that uses the url as input argument, scrapes the data and returns it
+
+Try out your function on the site
+https://www.baseball-reference.com/awards/hof_2021.shtml
+
+---
+
+# Your turn - solution
+
+```{r warning = FALSE, message = FALSE}
+library(rvest)
+
+bbwaa_scraper <- function(url) {
+  site <- read_html(url)
+  bbwaa <- site %>% html_element("#hof_BBWAA") %>% html_table()
+  
+  bbwaa
+}
+
+bbwaa_scraper("https://www.baseball-reference.com/awards/hof_2021.shtml")
+```
+
+---
+class: inverse
+# Your Turn: expanding 
+
+Expand your function by a parameter `element` that enables you to download different pieces from a website.
+
+Set `element` to "#hof_Veterans" and try out your function for the year 2022.
+
+
+---
+class: inverse
+# Your Turn: a helper function
+
+Write a helper function `dots_to_spaces` that takes as input a vector of characters (text), and returns as output the same vector in which all occurrences of '.' are replaced and all double spaces are reduced to one.
+
+```{r, eval = FALSE}
+dots_to_spaces <- function(x) {
+  # body of the function
+  
+  # return cleaned up vector x
+}
+```
+
+---
+class: inverse, center, middle
+# Always scrape data responsibly!

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Functions in R</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Heike Hofmann" />
+    <script src="libs/header-attrs-2.18/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# Functions in R
+]
+.author[
+### Heike Hofmann
+]
+
+---
+
+class: middle, inverse, center
+# Function writing
+
+
+
+---
+
+# Functions in R
+
+- Have been using functions a lot, now we want to write them ourselves!
+
+- Idea: avoid repetitive coding (errors will creep in)
+
+- Instead: extract common core, wrap it in a function, make it reusable
+
+
+---
+
+# Structure of functions
+
+- Name
+
+- Input arguments
+
+    - names, 
+
+    - default values
+
+- Body
+
+- Output values
+
+---
+
+# A first function
+
+
+```r
+mymean &lt;- function(x) {
+	return(sum(x)/length(x))
+}
+```
+
+
+```r
+mymean(1:15)
+```
+
+```
+## [1] 8
+```
+
+```r
+mymean(c(1:15, NA))
+```
+
+```
+## [1] NA
+```
+
+---
+
+# A first function (2)
+
+
+```r
+mymean &lt;- function(x, na.rm=F) {
+	if (na.rm) x &lt;- na.omit(x)
+	
+	return(sum(x)/length(x))
+}
+
+mymean(1:15)
+```
+
+```
+## [1] 8
+```
+
+```r
+mymean(c(1:15, NA), na.rm=T)
+```
+
+```
+## [1] 8
+```
+
+
+---
+class: inverse
+# Your Turn: a scraper 
+
+The package `rvest` allows us to download data from the baseball reference website `url` using the following lines of code:
+
+```
+library(rvest)
+site &lt;- read_html(url)
+bbwaa &lt;- site %&gt;% html_element("#hof_BBWAA") %&gt;% html_table()
+
+head(bbwaa)
+```
+
+Write a function that uses the url as input argument, scrapes the data and returns it
+
+Try out your function on the site
+https://www.baseball-reference.com/awards/hof_2021.shtml
+
+---
+
+# Your turn - solution
+
+
+```r
+library(rvest)
+
+bbwaa_scraper &lt;- function(url) {
+  site &lt;- read_html(url)
+  bbwaa &lt;- site %&gt;% html_element("#hof_BBWAA") %&gt;% html_table()
+  
+  bbwaa
+}
+
+bbwaa_scraper("https://www.baseball-reference.com/awards/hof_2021.shtml")
+```
+
+```
+## # A tibble: 26 × 39
+##    ``    ``          ``    ``    ``    ``    ``    ``    ``    ``    ``    ``   
+##    &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+##  1 Rk    Name        YoB   Votes %vote HOFm  HOFs  Yrs   WAR   WAR7  JAWS  Jpos 
+##  2 1     Curt Schil… 9th   285   71.1% 171   46    20    79.5  48.6  64.0  61.4 
+##  3 2     Barry Bonds 9th   248   61.8% 340   77    22    162.8 72.7  117.8 53.4 
+##  4 3     Roger Clem… 9th   247   61.6% 332   73    24    139.2 65.9  102.6 61.4 
+##  5 4     Scott Rolen 4th   212   52.9% 99    40    17    70.1  43.6  56.9  55.7 
+##  6 5     Omar Vizqu… 4th   197   49.1% 120   42    24    45.6  26.8  36.2  55.4 
+##  7 6     Billy Wagn… 6th   186   46.4% 107   24    16    27.7  19.8  23.7  32.5 
+##  8 7     Todd Helton 3rd   180   44.9% 175   59    17    61.8  46.6  54.2  53.8 
+##  9 8     Gary Sheff… 7th   163   40.6% 158   61    22    60.5  38.0  49.3  56.7 
+## 10 9     Andruw Jon… 4th   136   33.9% 109   34    17    62.7  46.4  54.6  58.1 
+## # … with 16 more rows, and 27 more variables: `Batting Stats` &lt;chr&gt;,
+## #   `Batting Stats` &lt;chr&gt;, `Batting Stats` &lt;chr&gt;, `Batting Stats` &lt;chr&gt;,
+## #   `Batting Stats` &lt;chr&gt;, `Batting Stats` &lt;chr&gt;, `Batting Stats` &lt;chr&gt;,
+## #   `Batting Stats` &lt;chr&gt;, `Batting Stats` &lt;chr&gt;, `Batting Stats` &lt;chr&gt;,
+## #   `Batting Stats` &lt;chr&gt;, `Batting Stats` &lt;chr&gt;, `Batting Stats` &lt;chr&gt;,
+## #   `Pitching Stats` &lt;chr&gt;, `Pitching Stats` &lt;chr&gt;, `Pitching Stats` &lt;chr&gt;,
+## #   `Pitching Stats` &lt;chr&gt;, `Pitching Stats` &lt;chr&gt;, `Pitching Stats` &lt;chr&gt;, …
+```
+
+---
+class: inverse
+# Your Turn: expanding 
+
+Expand your function by a parameter `element` that enables you to download different pieces from a website.
+
+Set `element` to "#hof_Veterans" and try out your function for the year 2022.
+
+
+---
+class: inverse
+# Your Turn: a helper function
+
+Write a helper function `dots_to_spaces` that takes as input a vector of characters (text), and returns as output the same vector in which all occurrences of '.' are replaced and all double spaces are reduced to one.
+
+
+```r
+dots_to_spaces &lt;- function(x) {
+  # body of the function
+  
+  # return cleaned up vector x
+}
+```
+
+---
+class: inverse, center, middle
+# Always scrape data responsibly!
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
